@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [[ "$1" =~ ^(-f|--flush)$ ]]; then
+	a=$(find . -iname "*.mp4" | wc -l)
+	echo "Are you sure you want to flush $a files?"
+	echo -n "[y/N]: "; read junk
+	if [[ "$junk" == [yY] ]]; then find . -iname "*.mp4" -type f -exec rm -v {} \;; fi
+	echo "--- Press [Enter] to exit ---"; read -s; exit
+fi
+
 # checks for each directory and does a yt-mass in each one
 for f in *; do
 	if [[ -d "$f" ]]; then
