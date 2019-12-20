@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# fancy text function
+#####################
+function fancyText {
+	# empty variables
+	junk=; bank=; text=;
+
+	# set proper character bank
+	if [[ "$1" == "leet" ]]; then bank="4b<d3fgh!jk7mn0pqr5tuvwXyz";
+	elif [[ "$1" == "japanese" ]]; then bank="凡乃ㄈ刀モ下G什ﾉﾌに乚州几ロ尸Q尺らイ凵レ山ㄨㄚ乙";
+	elif [[ "$1" == "vampire" ]]; then bank="𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟"; fi
+
+
+	# encode text
+	if ! [[ "$bank" == "" ]]; then
+		echo -n "Enter text: "; read junk
+		if ! [[ "$junk" == "" ]]; then echo "$junk" | sed -e "s/[aA]/${bank:0:1}/g" -e "s/[bB]/${bank:1:1}/g" -e "s/[cC]/${bank:2:1}/g" -e "s/[dD]/${bank:3:1}/g" -e "s/[eE]/${bank:4:1}/g" -e "s/[fF]/${bank:5:1}/g" -e "s/[gG]/${bank:6:1}/g" -e "s/[hH]/${bank:7:1}/g" -e "s/[iI]/${bank:8:1}/g" -e "s/[jJ]/${bank:9:1}/g" -e "s/[kK]/${bank:10:1}/g" 	-e "s/[lL]/${bank:11:1}/g"	-e "s/[mM]/${bank:12:1}/g" -e "s/[nN]/${bank:13:1}/g" -e "s/[oO]/${bank:14:1}/g" -e "s/[pP]/${bank:15:1}/g" -e "s/[qQ]/${bank:16:1}/g" -e "s/[rR]/${bank:17:1}/g" -e "s/[sS]/${bank:18:1}/g" -e "s/[tT]/${bank:19:1}/g" -e "s/[uU]/${bank:20:1}/g" -e "s/[vV]/${bank:21:1}/g" -e "s/[wW]/${bank:22:1}/g" -e "s/[xX]/${bank:23:1}/g" -e "s/[yY]/${bank:24:1}/g" -e "s/[zZ]/${bank:25:1}/g"; fi
+	fi
+}
+
+
+
+# main menu function
+####################
+function mainMenu {
+	while [[ 1 == 1 ]]; do
+		echo "=== available fonts"
+		echo "[j] ﾌ凡尸凡几モらモ"
+		echo "[l] L33T"
+		echo "[v] 𝖛𝖆𝖒𝖕𝖎𝖗𝖊"
+
+		echo -n "Select a font: "; read junk
+
+		if [[ "$junk" == [jJ] ]]; then
+			fancyText "japanese"
+
+		elif [[ "$junk" == [lL] ]]; then
+			fancyText "leet"
+
+		elif [[ "$junk" == [vV] ]]; then
+			fancyText "vampire"
+
+		elif [[ "$junk" == [qQ] ]]; then
+			exit
+
+		else
+			clear
+
+		fi
+	done
+}
+
+# main menu trigger
+###################
+mainMenu
