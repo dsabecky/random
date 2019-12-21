@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#####################################################################
+# Flush .mp4 files
+# [ -f | --flush ]
+#
+# Flush out files (with confirmation).
+#####################################################################
 if [[ "$1" =~ ^(-f|--flush)$ ]]; then
 	a=$(find . -iname "*.mp4" | wc -l)
 	echo "Are you sure you want to flush $a files?"
@@ -8,7 +14,32 @@ if [[ "$1" =~ ^(-f|--flush)$ ]]; then
 	echo "--- Press [Enter] to exit ---"; read -s; exit
 fi
 
+
+#####################################################################
+# Yes automatically
+# [ -y | --yes ]
+#
+# Implies yes on asking.
+# You could "yes|./CheckAll" but who's counting anyways?
+#####################################################################
+if [[ "$1" =~ ^(-y|--yes)$ ]]; then
+	for f in *; do
+		if [[ -d "$f" ]]; then
+			echo "Checking $f..."
+			cd "$f"
+			youtube-dl --force-ipv4 -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --match-filter "duration < 7200" --download-archive archive.txt -a download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'
+			rm *.jpg 2> /dev/null
+			rm *.part 2> /dev/null
+			cd ..
+		fi
+	done
+fi
+
+#####################################################################
+# Main function
+#
 # checks for each directory and does a yt-mass in each one
+#####################################################################
 for f in *; do
 	if [[ -d "$f" ]]; then
 		junk=
