@@ -1,7 +1,5 @@
 #!/bin/bash
 
-yt_args="--force-ipv4 -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --match-filter 'duration < 7200' --download-archive .archive.txt -a .download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'"
-
 #####################################################################
 # Flush .mp4 files
 # [ -f | --flush ]
@@ -29,8 +27,9 @@ if [[ "$1" =~ ^(-y|--yes)$ ]]; then
 		if [[ -d "$f" ]]; then
 			echo "Checking $f..."
 			cd "$f"
-			youtube_dl $yt_args
-			rm *.jpg *.part 2> /dev/null
+			youtube-dl --force-ipv4 -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --match-filter "duration < 7200" --download-archive archive.txt -a download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'
+			rm *.jpg 2> /dev/null
+			rm *.part 2> /dev/null
 			cd ..
 		fi
 	done
@@ -49,8 +48,9 @@ for f in *; do
 		if [[ "$junk" == [yY] ]]; then
 			echo "Checking $f..."
 			cd "$f"
-			youtube_dl $yt_args
-			rm *.jpg *.part 2> /dev/null
+			youtube-dl --force-ipv4 -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --match-filter "duration < 7200" --download-archive archive.txt -a download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'
+			rm *.jpg 2> /dev/null
+			rm *.part 2> /dev/null
 			cd ..
 		fi
 	fi
