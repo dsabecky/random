@@ -31,6 +31,9 @@ VSCODE=code-insiders
 # check for and install updates
 alias update="sudo apt update && sudo apt upgrade && sudo apt autoremove"
 
+# set keyboard color
+alias msi="sudo msi-perkeyrgb -m gs65 -s $1"
+
 # load extra scripts
 source $ZSH/oh-my-zsh.sh
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
