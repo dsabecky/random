@@ -1,0 +1,36 @@
+# Path to your oh-my-zsh installation.
+export ZSH="/home/dsabecky/.oh-my-zsh"
+PROMPT="%F{magenta}%B%~%b %F{cyan}➜ "
+
+# Uncomment the following line to use case-sensitive completion.
+CASE_SENSITIVE="false"
+HYPHEN_INSENSITIVE="true"
+DISABLE_AUTO_TITLE="true"
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+	export EDITOR='nano'
+else
+	export EDITOR='subl'
+fi
+
+# nvm
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# youtube-dl shortcuts
+alias yt="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --external-downloader axel --external-downloader-args '-n 10 -a' -o '%(title)s.%(ext)s' $1"
+alias yt-pl="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s' $1"
+alias yt-chan="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt -o '%(title)s.%(ext)s' $1"
+alias yt-mass="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt -a download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'"
+
+# Which plugins would you like to load?
+plugins=(colorize github sudo ubuntu vscode)
+VSCODE=code-insiders
+
+# check for and install updates
+alias update="sudo apt update && sudo apt upgrade && sudo apt autoremove"
+
+# load extra scripts
+source $ZSH/oh-my-zsh.sh
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
