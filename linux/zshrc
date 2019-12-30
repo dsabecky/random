@@ -6,9 +6,9 @@ HYPHEN_INSENSITIVE="true"
 
 # prompt
 if [[ $(id -u) == 0 ]]; then
-	PROMPT="%F{magenta}%B%~%b %F{cyan}# "
+	PROMPT="%F{magenta}%B%~%b %F{cyan}#%f "
 else
-	PROMPT="%F{magenta}%B%~%b %F{cyan}➜ "
+	PROMPT="%F{magenta}%B%~%b %F{cyan}➜%f "
 fi
 
 # Preferred editor for local and remote sessions
@@ -31,6 +31,9 @@ VSCODE=code-insiders
 
 # set keyboard color
 alias msi="sudo msi-perkeyrgb -m gs65 -s $1"
+
+# reload zsh config
+alias reload="source $ZDOTDIR/.zshrc"
 
 # rename tv shows
 alias rename-tv='rename -v '"'"'s/.*(S[0-9]*E[0-9]*).*/$1\.mkv/'"'"' *'
