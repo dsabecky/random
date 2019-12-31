@@ -23,6 +23,9 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
+# PATH for ~/.local/bin
+export PATH="$PATH:$HOME/.local/bin"
+
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -38,6 +41,7 @@ alias reload="source $ZDOTDIR/.zshrc"
 
 # rename tv shows
 alias rename-tv='rename -v '"'"'s/.*(S[0-9]*E[0-9]*).*\.(avi|mkv|mp4)/$1\.$2/i'"'"' *'
+alias rename-tv-x='rename -v '"'"'s/.*?([0-9]*)[xX]([0-9]*).*?(avi|mkv|mp4)/S$1E$2.$3/i'"'"' *'
 
 # check for and install updates
 alias update="sudo apt update && sudo apt upgrade && sudo apt autoremove"
