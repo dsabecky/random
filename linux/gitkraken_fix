@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# set paths cause im lazy
+d="/var/lib/snapd/desktop/applications/gitkraken_gitkraken.desktop"
+i="/snap/gitkraken/current/usr/share/pixmaps/gitkraken.png"
+
+# check if snap is installed
+if ! [[ -f "$d" ]]; then
+	echo "GitKraken via Snap not installed!";
+	echo "Press any key to exit."; read -s; exit
+fi
+
+# check sudo/root since snap is root owned
+if ! [[ $(id -u) == 0 ]]; then
+	echo "Please elevate via sudo."	
+	sudo "$0"
+	exit
+fi
+
+# edit the file. ez clap.
+echo -n "Pre modified file: "; grep -o "^Icon=.*" $d
+sed -ie "s#^Icon=.*#Icon=$i#" $d
+
+echo -n "Post modified file: "; grep -o "^Icon=.*" $d
+
+echo "Jobs done! Relogin or reload gnome-shell."; read -s
