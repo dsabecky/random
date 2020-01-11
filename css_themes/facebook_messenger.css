@@ -1,0 +1,89 @@
+:root {
+    /* available colors */
+    --discord-not-black: #23272A;
+    --discord-gray: #2C2F33;
+
+    --taco-bell: #682A8D;
+    --taco-bell-lite: #A07EBA;
+
+    --wow-death-knight: #C41F3B;
+    --wow-demon-hunter: #A330C9;
+    --wow-druid: #FF7D0A;
+    --wow-hunter: #A9D271;
+    --wow-mage: #40C7EB;
+    --wow-monk: #00FF96;
+    --wow-paladin: #F58CBA;
+    --wow-priest: #FFFFFF;
+    --wow-rogue: #FFF569;
+    --wow-shaman: #0070DE;
+    --wow-warlock: #8787ED;
+    --wow-warrior: #C79C6E;
+    
+    --minecraft-creeper: #0DB50D;
+    --minecraft-creeper-lite: #8FE38F;
+
+    --almost-white: #DDD;
+    --slowsilver: #444;
+    --quicksilver: #555;
+    --blood-forest: #ff0066;
+
+
+    /* color palletes */
+    --bg1: var(--discord-not-black, #232323);   /* main background */
+    --bg2: var(--discord-gray, #323232);        /* accents */
+    --bg3: var(--slowsilver, #666);             /* menus, chat bubbles (theirs) */
+    --bg4: var(--quicksilver, #666);            /* chat bubbles (yours) */
+
+    --text1: var(--almost-white, #fff);         /* standard text */
+    --text2: var(--taco-bell-lite, #fff);       /* medium text */
+    --text3: var(--wow-paladin, #fff);          /* important text (and links) */
+}
+
+
+/* ########## global ########## */
+body { color: var(--almost-white) !important; font-family: "ITC Avant Garde Gothic Std", "Century Gothic", "Ubuntu", "Sans" !important; }
+::selection { color: var(--bg2); background: var(--text3) !important; }
+::-moz-selection { color: var(--bg2); background: var(--text3) !important; }
+
+
+/* ########## hotfixes ########## */
+path[fill], path[style], g#Page-1 { fill: var(--text2) !important; }    /* changes buttons to text2 color */
+._2pgc { border: none; }                                                /* remove border from sticker searchbox */
+div._3oh- { font-size: 14px !important; }                               /* chat bubble font size */
+._4eby { border-radius: 0; }                                            /* artifacting borders on camera popup window */
+.uiCloseButton { filter: brightness(0) invert(1) !important; }          /* webcam close button correct */
+._b-u, ._b-v { filter: brightness(0) invert(1) !important; }            /* search conversation arrow button */
+._-lj ._4rlt { border: none; }                                          /* emoji selection border */
+._4_j4 .chatAttachmentShelf { border-top: 1px solid var(--bg1); }       /* attachment border */
+._6zv_._6zv_ { background-color: var(--text2); }                        /* unread message bubble */
+
+
+/* ########## background ########## */
+/* one */
+._4u-c, ._17pz, ._7kpk, time, ._5iwm ._58al, ._4_j4 .chatAttachmentShelf { background-color: var(--bg1); }
+._383m { background-color: var(--bg1) !important; }
+
+/* two */
+._36ic, ._6-xk, ._673w, ._4rv3, ._7tpc, ._1t2u, ._5irm, ._5iwm._6-_b ._58al, ._5irm._7mkm, ._7mki, ._33p7, ._1uwz, ._2pgc, ._aou, ._ui9, ._-lj ._4rlt { background-color: var(--bg2); }
+._5r8a._5r8b { background-color: var(--bg2) !important; }
+._5r8e { border-bottom: 1px solid var(--bg2); }
+
+/* three */
+._hh7, ._hh7:active, ._558b ._54ng, ._53ij, ._3mtr ._4qcs, ._4eby, ._2y8_ { background-color: var(--bg3); }
+
+/* four */
+._hh7[style$="background-color: rgb(0, 153, 255);"], ._4kf5 { background-color: var(--bg4) !important; }
+#._hh7[style], ._4kf5 { background-color: var(--bg4) !important; }
+
+/* ########## text ########## */
+/* one */
+._2v6o, ._1htf, ._3eus, ._7ht_, ._hh7, ._nd_ ._hh7, ._2i-c ._54nf ._54nh, ._58al, ._1n-e, ._67tw, ._5i_d .__6l, ._364g, ._3q34, ._4kf5  { color: var(--text1); }
+::placeholder { color: var(--text1) !important; }
+._kmc._7kpg ._1p1t { -webkit-text-fill-color: var(--text1); }
+
+/* two */
+h1, h2, ._3cng, ._44jz, time, ._497p, ._1ht6, ._3szq, ._6-xo, ._17w2, ._36zg, ._5i_d .__6k, ._1ht3 ._1htf, ._3q35, ._1ht3 ._1ht7._6zkh { color: var(--text2); }
+
+/* three */
+._3quh, ._1ht7, ._1lj0, ._1lj0._6ybm, ._44ju ._44jz, ._5i_d .__6m, ._225b._6ybl { color: var(--text3); }
+a { color: var(--text3) !important; }

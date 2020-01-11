@@ -1,0 +1,106 @@
+:root {
+	/* available colors */
+	--discord-not-black: #23272A;
+	--discord-gray: #2C2F33;
+
+	--taco-bell: #682A8D;
+	--taco-bell-lite: #A07EBA;
+	
+	--overwatch-dragons-red: #D22730;
+	--overwatch-dynasty-gold: #AD8900;
+	--overwatch-excelsior-blue: #181C39;
+	--overwatch-excelsior-blue-lite: #2B58E9;
+	--overwatch-excelsior-red: #F22431;
+	--overwatch-mayhem-red: #AF282F;
+	--overwatch-mayhem-yellow: #FEDC01;
+	--overwatch-fuel-blue: #0B233F;
+	--overwatch-fuel-blue-lite: #0071CD;
+	--overwatch-fuel-gray: #9EA2A3;
+	--overwatch-fusion-orange: #F89D2A;
+	--overwatch-gladiators-purple: #381360;
+	--overwatch-outlaws-green: #96CA4E;
+    --overwatch-hunters-gold: #B4926A;
+    --overwatch-hunters-orange: #FD9D0A;
+    --overwatch-reign-gray: #323232;
+    --overwatch-reign-gray-lite: #C4C4C4;
+    --overwatch-reign-red: #910F1B;
+	--overwatch-shock-orange: #FC4C01;
+	--overwatch-spark-pink: #F986A7;
+	--overwatch-spitfire-blue: #1B2B3A;
+	--overwatch-spitfire-blue-lite: #59CAE8;
+	--overwatch-spitfire-orange: #FF8201;
+	--overwatch-uprising-blue: #174B97;
+	--overwatch-uprising-yellow: #EEDF00;
+	--overwatch-valiant-green: #2A7230;
+	--overwatch-valiant-yellow: #E5D661;
+    
+	--wow-death-knight: #C41F3B;
+	--wow-demon-hunter: #A330C9;
+	--wow-druid: #FF7D0A;
+	--wow-hunter: #A9D271;
+	--wow-mage: #40C7EB;
+	--wow-monk: #00FF96;
+	--wow-paladin: #F58CBA;
+	--wow-priest: #FFFFFF;
+	--wow-rogue: #FFF569;
+	--wow-shaman: #0070DE;
+	--wow-warlock: #8787ED;
+	--wow-warrior: #C79C6E;
+	
+	--minecraft-creeper: #0DB50D;
+	--minecraft-creeper-lite: #8FE38F;
+
+	--almost-white: #DDDDDD;
+	--quicksilver: #555555;
+	--blood-forest: #ff0066;
+	--spearmint: #45B08C;
+
+
+	/* color palletes */
+	--bg1: var(--discord-not-black, #232323);		/* main background */
+	--bg2: var(--discord-gray, #323232);			/* accented background */
+	--bg3: var(--quicksilver, #666);				/* hovers and misc backgrounds */
+
+	--text1: var(--almost-white, #fff);				/* standard text */
+	--text2: var(--minecraft-creeper, #fff);		/* larger text "titles, headers, etc" */
+	--text3: var(--minecraft-creeper-lite, #fff);	/* important text and links */
+	--text4: var(--spearmint, #ff9900)				/* visited links and oddballs */
+}
+
+
+
+/* globals */
+* { font-family: "ITC Avant Garde Gothic Std", "Century Gothic", Calibri !important; }
+::selection { color: var(--bg2); background: var(--text3) !important; }
+::-moz-selection { color: var(--bg2); background: var(--text3) !important; }
+.XCKyNd, .VByer .TU05kd, div[class=gb_Lf] .gb_B { filter: brightness(0) invert(1) !important; }
+.VlcLAe input[type="submit"], .Cc3NMb, .ZIxWWd, .k6J3K { background-image: none; }
+
+/* borders */
+.qmv19b { border: none; }
+#fbar { border-top: none; }
+#hdtb { border-bottom: none; }
+.rl_item_base { border: 0px solid var(--bg1); }
+div[class$="minidiv"] form div div .RNNXgb, .kp-blk .xpdclose .farUxc, .kp-blk .xpdopen .mJ2Mod, .scrt tr:first-child td, .Cc3NMb, .ZIxWWd, .k6J3K { border: 1px solid var(--bg1); }
+.EPLo7b, .ccBEnf, .zkIadb, .wYWDAd, a.scCTtb { border-top: 1px solid var(--bg1) !important; }
+.jhg04d, .scrt td, .scrt .YMAGHf { border-bottom: 1px solid var(--bg1); }
+.kp-blk, .cbphWd, .RNNXgb, .cv2VAd, .VlcLAe input[type="submit"], .vk_c, .vk_cxp, #rhs .fIcnad, .Mw2I7, .lU8dJf { border: 1px solid var(--bg2); }
+.pYBuhc .NYCmxf { border: 1px solid var(--bg3); }
+#hdtb-msb .hdtb-mitem.hdtb-msel { border-bottom: 3px solid var(--bg3); }
+
+/* hotfixes */
+.P5BnJb { border-radius: 8px; } /* top stories border radius */
+.z1asCe path { fill: var(--text3); } /* search bar glass icon */
+.action-menu .mn-dwn-arw { border-color: var(--text2) transparent; } /* search result link arrow */
+
+/* background */
+body, #hdtbSum, #appbar, .GHDvEf, .GHDvEf:hover, .GHDvEf.selected, .GHDvEf.selected:hover, .Cc3NMb, .ZIxWWd, .sbhl, #topstuff .sh-sp__pswtr, div[class$="minidiv"] form div div .RNNXgb { background-color: var(--bg1); }
+#fbar, .gb_D, .gb_H, .minidiv .sfbg, .RNNXgb, .aajZCb, .kp-blk, g-inner-card, .VlcLAe input[type="submit"] , .rl_item_base, .AYBNrd, .HIf9ae, .P5BnJb, .Mw2I7, .lU8dJf, .yMspv, .vk_c, .vk_cxp, .yyjhs, .dRX93b { background-color: var(--bg2); }
+.gb_I, .y8Jpof:hover { background-color: var(--bg3); }
+
+/* text */
+#resultStats, .f, .s, .gLFyf, .sbl1, .y8Jpof .LrzXr, .smiUbb, .zECGdd, .VlcLAe input[type="submit"], .j04ED, .P7Vl4c .RCBpod, .xlBGCb, .jbzYp, .q0OVVc, .lVpIye, .NmQOSc, .Vcnuqf, .HoEOQb, .rvntgc div, .i29hTd .kR7nSc, .Mw2I7, .F7IIOc, .kHxwFf, .CV7Lzb, .sh-dtt__top-tools { color: var(--text1); }
+body, .w8qArf .fl, .vk_gy, .Cc3NMb, .ZIxWWd, .mVDMnf { color: var(--text1) !important; }
+cite, #hdtb-msb .hdtb-mitem.hdtb-msel, .JolIg, .s .st em, .st.s.std em, .garHBe, .cwUqwd, .cJzOGc, .P1usbc, .Ss2Faf, #foot #navcnt .cur, .rl_item_base .title, .kno-ecr-pt, .N6Sb2c, .i29hTd .qLLird, .shDvCe, .eJ7tvc, .vhWGrd div, #brs .med, .DRolee, .dbg0pd, .DLOTif, .ELcVZ, .w { color: var(--text2); }
+a, .xXEKkb, .rsir2d, .wwUB2c, .nJGrxf.FnqxG, a.scCTtb div, .VByer .UbRuwe, .L48Cpd .BSaJxc, .pYBuhc .NYCmxf { color: var(--text3) !important; }
+a:visited, .sbl1p, #Wprf1b, .wUrVib, .EZRelc, .Eegi6c, .kno-ftr, .Z0LcW, .rllt__tile-label, .sh-dgr__grid-result, .sh-dgr__grid-result { color: var(--text4) !important; }
