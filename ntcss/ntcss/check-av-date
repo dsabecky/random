@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# config
+ avPath="/opt/NAI/LinuxShield"
+binPath="/bin"
+datPath="/engine/dat"
+
+printf "\nMcAfee VSEL Nails Check\n\n"
+
+# validate user
+echo -n "Are you root... "
+if [[ `id -u` -ne 0 ]]; then echo -n "nope! Press enter to exit. :("; read -s; exit 1
+else echo "yaaas queen!"; fi
+
+# validate binaries
+echo -n "Locating nails binary... "
+if ! [[ -f "$avPath$binPath/nails" ]]; then echo -n "failed! Press enter to exit. :("; read -s; exit 1
+else echo "success!"; fi
+
+# validate data files
+echo -n "Locating engine data... "
+if ! [[ -f "$avPath$datPath/avvclean.dat" ]]; then echo -n "failed! Press enter to exit. :("; read -s; exit 1
+else echo "success!"; fi
+
+printf "\n##########\n\n"
+
+# print nails version info
+printf "Nails info:"
+$avPath$binPath/nails --version
+
+printf "\n##########\n\n"
+
+echo -n "Today is: "; date
+
+printf "\nDAT timestamps:\n"
+ls -lh $avPath$datPath/avv*.dat | cut -d' ' -f6-10
+
+exit 0

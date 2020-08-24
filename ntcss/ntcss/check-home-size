@@ -1,0 +1,14 @@
+#!/bin/bash
+
+printf "\nHome Drive Space Check\n"
+
+printf "\n##########\n\n"
+
+echo "/h Space Utilization:"
+df -kh | grep "^Filesystem"
+df -kh | grep "/h$"
+
+printf "##########\n\n"
+
+echo "Home folders (non-empty):"
+du -sh /h/USERS/* | grep "^[0-9.]*[GM]"
