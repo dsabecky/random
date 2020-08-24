@@ -15,7 +15,8 @@ cd ..
 
 # install the update bish
 dpkg -i libmutter-6-0_*.deb
-apt-mark hold libmutter-6-0
+dpkg -i gir1.2-mutter*.deb
+apt-mark hold libmutter-6-0 gir1.2-mutter
 
 # do a version check
-apt list --installed | grep libmutter-6-0
+apt list --installed | grep -E "(libmutter-6-0|gir1.2-mutter)"
