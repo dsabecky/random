@@ -5,6 +5,9 @@ HISTFILE="$ZDOTDIR/.zsh_history"
 HYPHEN_INSENSITIVE="true"
 ZSH_DISABLE_COMPFIX="true"
 
+# cursebreaker
+export CURSEBREAKER_PATH='/home/dsabecky/.wine/drive_c/Program Files (x86)/World of Warcraft/_retail_'
+
 # prompt
 if [[ $(id -u) == 0 ]]; then
 	PROMPT="%F{magenta}%B%~%b %F{cyan}#%f "
@@ -32,6 +35,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # Which plugins would you like to load?
 plugins=(colorize github sudo ubuntu vscode)
 VSCODE=code-insiders
+
+# cursebreaker wow updates
+alias cb='CurseBreaker'
 
 # set keyboard color
 alias msi="sudo msi-perkeyrgb -m gs65 -s $1"
