@@ -13,10 +13,14 @@ sed  -i '/case XkbNewKeyboard/d' src/backends/x11/meta-backend-x11.c
 dpkg-buildpackage -rfakeroot -uc -b
 cd ..
 
+# set the correct version (6 for older 7 for newer)
+ver=$(ls libmutter* | head -1 | cut -d"-" -f"2")
+
 # install the update bish
-dpkg -i libmutter-6-0_*.deb
+dpkg -i libmutter-$ver-0_*.deb
+dpkg -i mutter*.deb
 dpkg -i gir1.2-mutter*.deb
-apt-mark hold libmutter-6-0 gir1.2-mutter
+apt-mark hold libmutter-$ver-0 gir1.2-mutter
 
 # do a version check
-apt list --installed | grep -E "(libmutter-6-0|gir1.2-mutter)"
+apt list --installed | grep "mutter"
