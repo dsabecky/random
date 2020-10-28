@@ -24,3 +24,6 @@ apt-mark hold libmutter-$ver-0 gir1.2-mutter
 
 # do a version check
 apt list --installed | grep "mutter"
+
+# remove all our hard work
+find . -iname "*mutter" ! -iname "buildmutter" -exec rm -rf {} \; 2> /dev/null
