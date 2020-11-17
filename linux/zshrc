@@ -37,7 +37,10 @@ plugins=(colorize github sudo ubuntu vscode)
 VSCODE=code-insiders
 
 # cursebreaker wow updates
-alias cb="python3 ~/Documents/GitHub/CurseBreaker/CurseBreaker.py"
+alias cb="a=$(pwd); cd ~/Documents/GitHub/CurseBreaker; git pull; python3 CurseBreaker.py; cd $a"
+
+# install (apt) shortcut
+alias i="sudo apt install $1"
 
 # make / make install shortcuts
 alias m="make"
