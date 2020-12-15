@@ -10,14 +10,16 @@ export CURSEBREAKER_PATH='/media/haldu/Applications/World of Warcraft/_retail_/'
 
 # prompt
 if [[ $(id -u) == 0 ]]; then
-	PROMPT="%F{magenta}%B%~%b %F{cyan}#%f "
+	PROMPT="%F{132}%B%~%b %F{cyan}#%f "
 else
-	PROMPT="%F{magenta}%B%~%b %F{cyan}➜%f "
+	PROMPT="%F{132}%B%~%b %F{cyan}➜%f "
 fi
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
 	export EDITOR='vim'
+elif [[ $(uname) == "Darwin" ]]; then
+	export EDITOR='open -a "Visual Studio Code - Insiders"'
 else
 	export EDITOR='code'
 fi
@@ -79,4 +81,9 @@ alias zshcfg="$EDITOR ~/.zshrc"
 
 # load extra scripts
 source $ZSH/oh-my-zsh.sh
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
+
+if [[ $(uname) == "Darkwin" ]]; then
+	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
+else
+	source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
+fi
