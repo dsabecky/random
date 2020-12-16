@@ -29,7 +29,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # PATH for ~/.local/bin
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:/usr/local/opt/python/libexec/bin:$HOME/.local/bin"
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -37,6 +37,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # Which plugins would you like to load?
 plugins=(colorize github sudo ubuntu vscode)
 VSCODE=code-insiders
+
+# architecture shorthand
+alias ar="arch -x86_64 $1"
 
 # cursebreaker wow updates
 alias cb="a=$(pwd); cd ~/Documents/GitHub/CurseBreaker; git pull; python3 CurseBreaker.py; cd $a"
