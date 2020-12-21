@@ -35,7 +35,7 @@ export PATH="$PATH:/usr/local/opt/python/libexec/bin:$HOME/.local/bin"
 export ZSH="$HOME/.oh-my-zsh"
 
 # Which plugins would you like to load?
-plugins=(colorize github sudo ubuntu vscode)
+plugins=(colorize github sudo ubuntu vscode zsh-autosuggestions)
 VSCODE=code-insiders
 
 # architecture shorthand
@@ -75,6 +75,7 @@ alias weather="curl 'wttr.in/?m'"
 
 # youtube-dl shortcuts
 alias yt="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --external-downloader axel --external-downloader-args '-n 10 -a' -o '%(title)s.%(ext)s' $1"
+alias yt-mp3="youtube-dl -ciwx --audio-format mp3 $1"
 alias yt-pl="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s' $1"
 alias yt-chan="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt -o '%(title)s.%(ext)s' $1"
 alias yt-mass="youtube-dl -ciw -f best --add-metadata --write-thumbnail --embed-thumbnail --download-archive archive.txt -a download.txt --yes-playlist -o '%(uploader)s - %(title)s.%(ext)s'"
@@ -85,7 +86,7 @@ alias zshcfg="$EDITOR ~/.zshrc"
 # load extra scripts
 source $ZSH/oh-my-zsh.sh
 
-if [[ $(uname) == "Darkwin" ]]; then
+if [[ $(uname) == "Darwin" ]]; then
 	source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
 else
 	source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2> /dev/null
