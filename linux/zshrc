@@ -35,7 +35,7 @@ export PATH="$PATH:/usr/local/opt/python/libexec/bin:$HOME/.local/bin"
 export ZSH="$HOME/.oh-my-zsh"
 
 # Which plugins would you like to load?
-plugins=(colorize github sudo ubuntu vscode zsh-autosuggestions)
+plugins=(colorize github sudo ubuntu osx vscode zsh-autosuggestions)
 VSCODE=code-insiders
 
 # architecture shorthand
