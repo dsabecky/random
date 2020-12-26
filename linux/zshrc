@@ -6,7 +6,7 @@ HYPHEN_INSENSITIVE="true"
 ZSH_DISABLE_COMPFIX="true"
 
 # cursebreaker
-export CURSEBREAKER_PATH='/media/haldu/Applications/World of Warcraft/_retail_/'
+export CURSEBREAKER_PATH='/Applications/World of Warcraft/_retail_/World of Warcraft.app'
 
 # prompt
 if [[ $(id -u) == 0 ]]; then
