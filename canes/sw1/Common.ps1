@@ -13,3 +13,7 @@ Set-Variable javaSettings "C:\Windows\Sun\Java\Deployment\deployment.properties"
 # psexec (with msi installer) on remote machine
 $Remote = read-host "Enter computer name"
 psexec \\$Remote -u $(whoami) -d -s cmd /c "msiexec /I "c:\full\path\here\.msi""
+
+# import active directory module
+Import-Module ActiveDirectory
+if (-Not (Get-Module -Name ActiveDirectory)) { exit }
