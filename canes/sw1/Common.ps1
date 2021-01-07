@@ -1,12 +1,8 @@
-# Name: IsValidHost
-# Description: Checks server name against the host type.
-# Example: IsValidHost('dc')
-#####################################################################
-function IsValidHost($Type) {
-    if ($Type -eq 'dc' -And $env:ComputerName -Match '^DC0[12]$') { return $True }
-    elseif ($Type -eq 'mts' -And $env:ComputerName -Match '^MTS(2|)$') { return $True }
-    elseif ($Type -eq 'ex' -And $env:ComputerName -Match '^EX0[12]$|IAEXET') { return $True }
-    else { return $False }
-}
+# check if dc01/2 or rodc
+if ($env:computername -NotMatch '^(RODC|DC0[12])$') { exit 1 }
 
-$Exec = "\\DC01\Software\SabeckyScripts"
+# check if mts/2
+if ($env:computername -NotMatch '^mts(2|)$') { exit 1 }
+
+# check if ex01/2
+if ($env:computername -NotMatch '^ex0[12]$') { exit 1 }
