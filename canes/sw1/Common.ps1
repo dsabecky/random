@@ -6,3 +6,6 @@ if ($env:computername -NotMatch '^mts(2|)$') { exit 1 }
 
 # check if ex01/2
 if ($env:computername -NotMatch '^ex0[12]$') { exit 1 }
+
+# java settings file
+Set-Variable javaSettings "C:\Windows\Sun\Java\Deployment\deployment.properties"
