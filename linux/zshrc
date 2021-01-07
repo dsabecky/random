@@ -5,8 +5,12 @@ HISTFILE="~/.zsh_history"
 HYPHEN_INSENSITIVE="true"
 ZSH_DISABLE_COMPFIX="true"
 
+# Which plugins would you like to load?
+plugins=(colorize github sudo ubuntu osx vscode zsh-autosuggestions)
+VSCODE=code-insiders
+
 # cursebreaker
-export CURSEBREAKER_PATH='/Applications/World of Warcraft/_retail_/World of Warcraft.app'
+export CURSEBREAKER_PATH='/Applications/World of Warcraft/_retail_'
 
 # prompt
 if [[ $(id -u) == 0 ]]; then
@@ -34,18 +38,18 @@ export PATH="$PATH:/usr/local/opt/python/libexec/bin:$HOME/.local/bin"
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Which plugins would you like to load?
-plugins=(colorize github sudo ubuntu osx vscode zsh-autosuggestions)
-VSCODE=code-insiders
-
 # architecture shorthand
 alias ar="arch -x86_64 $1"
 
 # cursebreaker wow updates
 alias cb="a=$(pwd); cd ~/Documents/GitHub/CurseBreaker; git pull; python3 CurseBreaker.py; cd $a"
 
-# install (apt) shortcut
-alias i="sudo apt install $1"
+# install (repo) shortcut
+if [[ $(uname) == "Darwin" ]]; then
+	alias i="sudo brew install $1"
+else
+	alias i="sudo apt install $1"
+fi
 
 # make / make install shortcuts
 alias m="make"
