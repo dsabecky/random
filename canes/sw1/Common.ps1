@@ -17,3 +17,7 @@ psexec \\$Remote -u $(whoami) -d -s cmd /c "msiexec /I "c:\full\path\here\.msi""
 # import active directory module
 Import-Module ActiveDirectory
 if (-Not (Get-Module -Name ActiveDirectory)) { exit }
+
+# import exchange module
+. C:\Program Files\Microsoft\Exchange Server\V14\Bin\RemoteExchange.ps1
+Connect-ExchangeServer $env:computername
