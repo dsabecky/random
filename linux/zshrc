@@ -72,7 +72,11 @@ alias rename-tv-x='rename -v '"'"'s/.*?([0-9]*)[xX]([0-9]*).*?(avi|mkv|mp4)/S$1E
 alias tmuxcfg="$EDITOR $HOME/.tmux.conf"
 
 # check for and install updates
-alias update="sudo apt update && sudo apt upgrade && sudo apt autoremove"
+if [[ $(uname) == "Darwin" ]]; then
+	alias update="brew update; ar brew upgrade"
+else
+	alias update="sudo apt update && sudo apt upgrade && sudo apt autoremove"
+fi
 
 # wine: disable logging
 export WINEDEBUG="-all"
