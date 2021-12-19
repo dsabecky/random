@@ -1,0 +1,6 @@
+Static
+(( VenomIRC $v.version :: $v.website ))
+(( VenomIRC $v.version :: $v.website ))
+(( VenomIRC $v.version by $v.author ))
+(( $me :: $v.version ))
+(( $me :: VenomIRC $v.version :: $v.website ))

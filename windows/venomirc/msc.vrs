@@ -1,0 +1,96 @@
+;[Multi Server Connect][2008-2013][Viperstryker]
+
+alias msc { if (!$dialog(msc)) { dialog -dmo msc msc } }
+
+alias con {
+  var %x = 2
+  if ($gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,1)),2,44)) { server -e $ini(scripts\msc\msc.ini,settings,1) $gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,1)),1,44) }
+  else { server $ini(scripts\msc\msc.ini,settings,1) $gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,1)),1,44) }
+  while (%x <= $ini(scripts\msc\msc.ini,settings,0)) {
+    if ($gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,%x)),2,44)) { server -em $ini(scripts\msc\msc.ini,settings,%x) $gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,%x)),1,44) }
+    else { server -m $ini(scripts\msc\msc.ini,settings,%x) $gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,%x)),1,44) }
+    inc %x
+  }
+}
+
+dialog msc {
+  title "Multiserver Connect"
+  size -1 -1 220 115
+  option dbu
+  box "Server:Port", 1, 5 5 210 105
+  list 2, 10 15 200 70, vsbar size
+  button "Add", 3, 10 90 32 12
+  button "Edit", 4, 45 90 32 12
+  button "Remove", 5, 80 90 32 12
+}
+
+dialog msc.ae {
+  title "MSC"
+  size -1 -1 120 92
+  option dbu
+  box "Information", 1, 5 5 110 60
+  text "Server:", 2, 10 15 20 8
+  edit "", 3, 10 25 100 10, autohs
+  text "Port:", 4, 10 40 15 8
+  edit "", 5, 10 50 30 10, autohs
+  check "SSL", 6, 45 52 20 8
+  button "Save", 7, 10 70 32 12, ok
+  button "Cancel", 8, 45 70 32 12, cancel
+}
+
+dialog msc.con {
+  title "Connection Confirmation"
+  size -1 -1 104 36
+  option dbu
+  text "Would you like to connect?", 1, 19 5 65 8, center
+  button "Yes", 2, 17 20 32 12, ok
+  button "No", 3, 50 20 32 12, cancel
+}
+
+ON *:DIALOG:msc:INIT:*: {
+  var %x = 1
+  while (%x <= $ini(scripts\msc\msc.ini,settings,0)) {
+    did -a msc 2 $ini(scripts\msc\msc.ini,settings,%x) $+ : $+ $gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,%x)),1,44) $iif($gettok($readini(scripts\msc\msc.ini,settings,$ini(scripts\msc\msc.ini,settings,%x)),2,44) == 1,[SSL])
+    inc %x
+  }
+}
+
+ON *:DIALOG:msc:SCLICK:3: { dialog -dmo msc.ae msc.ae | dialog -t msc.ae MSC :: Add | set %msc add }
+
+ON *:DIALOG:msc:SCLICK:4: {
+  if ($did(2).sel) {
+    set %msc edit
+    dialog -dmo msc.ae msc.ae
+    dialog -t msc.ae MSC :: Edit
+    did -a msc.ae 3 $gettok($did(msc,2).seltext,1,58)
+    did -a msc.ae 5 $gettok($readini(scripts\msc\msc.ini,settings,$gettok($did(msc,2).seltext,1,58)),1,44)
+    if (!$sslready) { did msc.ae -b 6 }
+    $iif($gettok($readini(scripts\msc\msc.ini,settings,$gettok($did(msc,2).seltext,1,58)),2,44) == 1,did -c msc.ae 6)
+  }
+}
+
+ON *:DIALOG:msc:SCLICK:5: {
+  if ($did(2).sel) { .remini scripts\msc\msc.ini settings $gettok($did(msc,2).seltext,1,58) | did -d msc 2 $did(2).sel }
+}
+
+ON *:DIALOG:msc.ae:SCLICK:7: {
+  if ($did(3).text) && ($did(5).text) {
+    if ($did(5).text isnum) {
+      if (%msc == add) {
+        .writeini scripts\msc\msc.ini settings $did(3).text $did(5).text $+ , $+ $iif($did(6).state == 1,1,0)
+        did -a msc 2 $did(msc.ae,3).text $+ : $+ $did(msc.ae,5).text $iif($did(msc.ae,6).state == 1,[SSL])
+      }
+      if (%msc == edit) {
+        .remini scripts\msc\msc.ini settings $gettok($did(msc,2).seltext,1,58)
+        .writeini scripts\msc\msc.ini settings $did(3).text $did(5).text $+ , $+ $iif($did(6).state == 1,1,0)
+        did -o msc 2 $did(msc,2).sel $did(msc.ae,3).text $+ : $+ $did(msc.ae,5).text $iif($did(msc.ae,6).state == 1,[SSL])
+      }
+    }
+  }
+}
+
+ON *:DIALOG:msc.ae:CLOSE:*: { unset %msc }
+
+ON *:DIALOG:msc.con:SCLICK:2: { con }
+
+ON *:START: { if ($ini(scripts\msc\msc.ini,settings,0) > 0) { dialog -mo msc.con msc.con } }

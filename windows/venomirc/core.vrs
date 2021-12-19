@@ -1,0 +1,47 @@
+;[Core][2008-2014][dsabecky]
+
+on *:START: { v.titlebar }
+
+alias quit.msg { return $read(scripts\quit.txt,2) }
+alias v.titlebar { titlebar $version venomIRC $conf.version }
+
+CTCP *:VERSION:CTCPREPLY $nick VERSION venomIRC $conf.version by $conf.author
+
+;; config functions
+alias conf { return $readini(scripts\config.ini,$1,$2) }
+
+alias conf.author  { return $conf(versioning,author) }
+alias conf.website { return $conf(versioning,website) }
+alias conf.version { return $conf(versioning,version) }
+
+
+;; core functions
+alias client { say I am running venomIRC $conf.version $+ . }
+
+alias clearallserv {
+  var %x = 1
+  while (%x <= $scon(0)) { scon %x | echo -s  $+ $color(info) $+ * Clearing all windows | clearall | inc %x }
+}
+
+alias closeall { echo -s  $+ $color(info) $+ * Closing all windows | .partall | close -icfgms@ }
+
+alias closeallserv {
+  var %x = 1
+  while (%x <= $scon(0)) { scon %x | echo -s  $+ $color(info) $+ * Closing all windows | .partall | close -icfgms@ | inc %x }
+}
+
+alias ghost {
+  if (!$2) { echo -a  $+ $color(info) $+ * Syntax: /ghost <nickname> <password> | HALT }
+  else {
+    .msg NickServ GHOST $1-
+    nick $1
+    .msg NickServ IDENTIFY $2
+  }
+}
+
+alias loc {
+  var %z 1 | var %y $script(0)
+
+  while (%z <= %y) { var %x $calc($lines($script(%z)) + %x) | inc %z }
+  echo -a Calculation of %y scripts: $bytes(%x,b)
+}

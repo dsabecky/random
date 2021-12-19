@@ -1,0 +1,247 @@
+;[AutoJoin][2008][Viperstrkyer]
+
+alias aj { if ($readini(scripts\config.ini,SCRIPTS,aj) == Enabled) { if (!$dialog(autojoin)) { dialog -dmo autojoin autojoin } } }
+
+dialog autojoin {
+  title "Auto Join - /aj"
+  size -1 -1 230 186
+  option dbu
+  box "Nicknames", 1, 5 5 70 160
+  list 2, 10 15 60 150, vsbar
+  box "Networks", 3, 80 5 70 160
+  list 4, 85 15 60 150, vsbar
+  box "Channels", 5, 155 5 70 160
+  list 6, 160 15 60 150
+  button "Add", 7, 5 170 20 10
+  button "Remove", 8, 25 170 28 10
+  button "Add", 9, 80 170 20 10
+  button "Remove", 10, 100 170 28 10
+  button "Add", 11, 155 170 20 10
+  button "Edit", 12, 175 170 20 10
+  button "Remove", 13, 195 170 28 10
+}
+
+ON *:DIALOG:autojoin:INIT:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\aj\aj.txt)) {
+    did -a autojoin 2 $read(scripts\aj\aj.txt,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:2: {
+  did -r autojoin 4
+  did -r autojoin 6
+  var %x = 1
+  while (%x <= $lines(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt)) {
+    did -a autojoin 4 $read(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:7: { dialog -dmo autojoin.addnick autojoin.addnick }
+
+dialog autojoin.addnick {
+  title "Auto Join - Add Nickname"
+  size -1 -1 120 60
+  option dbu
+  box "Add Nickname", 1, 5 5 110 35
+  text "Nickname:", 2, 10 15 40 8
+  edit "", 3, 10 25 100 10, autohs
+  button "Save", 4, 5 45 32 12, ok
+  button "Cancel", 5, 40 45 32 12, cancel
+}
+
+ON *:DIALOG:autojoin.addnick:SCLICK:4: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the nickname! | HALT }
+  else {
+    write scripts\aj\aj.txt $did(3).text
+    mkdir scripts\aj\ [ $+ [ $did(3).text ] ]
+    .fopen -n 1 scripts\aj\ [ $+ [ $did(3).text ] $+ ] \networks.txt
+    .fclose 1
+    .fopen -n 1 scripts\aj\ [ $+ [ $did(3).text ] $+ ] \key.ini
+    .fclose 1
+    did -a autojoin 2 $did(3).text
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:8: {
+  if ($did(2).seltext) {
+    did -r autojoin 4
+    write -d $+ $did(2).sel scripts\aj\aj.txt
+    var %x = 1
+    while (%x <= $lines(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt)) {
+      .remove scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \ [ $+ [ $read(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt,%x) ] $+ ] .txt
+      inc %x
+    }
+    .remove scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt
+    .remove scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \key.ini
+    .rmdir scripts\aj\ [ $+ [ $did(2).seltext ] ]
+    did -d autojoin 2 $did(2).sel
+    did -r autojoin 4
+    did -r autojoin 6
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:9: {
+  if (!$did(2).sel) { echo -a  $+ $color(info) $+ * Error: You must select a nickname before adding a network. | HALT }
+  else { dialog -dmo autojoin.addnet autojoin.addnet }
+}
+
+dialog autojoin.addnet {
+  title "Auto Join - Add Network"
+  size -1 -1 120 60
+  option dbu
+  box "Add Network", 1, 5 5 110 35
+  text "Network Name:", 2, 10 15 40 8
+  edit "", 3, 10 25 100 10, autohs
+  button "Save", 4, 5 45 32 12, ok
+  button "Cancel", 5, 40 45 32 12, cancel
+}
+
+ON *:DIALOG:autojoin.addnet:SCLICK:4: {
+  write scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \networks.txt $did(3).text
+  .fopen -n 1 scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \ [ $+ [ $did(3).text ] $+ ] .txt
+  .fclose 1
+  did -a autojoin 4 $did(3).text
+}
+
+ON *:DIALOG:autojoin:SCLICK:10: {
+  if ($did(4).sel) {
+    write -d $+ $did(4).sel scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \networks.txt
+    .remove scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \ [ $+ [ $did(4).seltext ] $+ ] .txt
+    .remove scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \key.ini
+    did -d autojoin 4 $did(4).sel
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:11: {
+  if (!$did(4).sel) { echo -a  $+ $color(info) $+ * Error: You must select a network to add a channel to! | HALT }
+  else { dialog -dmo autojoin.addchan autojoin.addchan }
+}
+
+dialog autojoin.addchan {
+  title "Auto Join - Add Channel"
+  size -1 -1 120 85
+  option dbu
+  box "Add Channel", 1, 5 5 110 55
+  text "Channel:", 2, 10 15 25 8
+  edit "", 3, 10 25 100 10, autohs
+  text "Key:", 4, 10 35 25 8
+  edit "", 5, 10 45 100 10, pass autohs
+  button "Save", 6, 5 65 32 12, ok
+  button "Cancel", 7, 40 65 32 12, cancel
+}
+
+ON *:DIALOG:autojoin.addchan:SCLICK:6: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the channel! | HALT }
+  else {
+    write scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \ [ $+ [ $did(autojoin,4).seltext ] $+ ] .txt $did(3).text
+    if ($did(5).text) { .writeini scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini $did(autojoin,4).seltext $did(3).text $did(5).text }
+    did -a autojoin 6 $did(3).text
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:4: {
+  did -r autojoin 6
+  var %x = 1
+  while (%x <= $lines(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \ [ $+ [ $did(4).seltext ] $+ ] .txt)) {
+    did -a autojoin 6 $read(scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \ [ $+ [ $did(4).seltext ] $+ ] .txt,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:12: {
+  if (!$did(6).sel) { echo -a  $+ $color(info) $+ * Error: You must select the channel you want to edit! | HALT }
+  else { dialog -dmo autojoin.editchan autojoin.editchan }
+}
+
+dialog autojoin.editchan {
+  title "Auto Join - Edit Channel"
+  size -1 -1 120 85
+  option dbu
+  box "Edit Channel", 1, 5 5 110 55
+  text "Channel:", 2, 10 15 25 8
+  edit "", 3, 10 25 100 10, autohs
+  text "Key:", 4, 10 35 25 8
+  edit "", 5, 10 45 100 10, pass autohs
+  button "Save", 6, 5 65 32 12, ok
+  button "Cancel", 7, 40 65 32 12, cancel
+}
+
+ON *:DIALOG:autojoin.editchan:INIT:*: {
+  did -a autojoin.editchan 3 $read(scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \ [ $+ [ $did(autojoin,4).seltext ] $+ ] .txt,$did(autojoin,6).sel)
+  if ($readini(scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini,$did(autojoin,4).seltext,$did(autojoin,6).seltext)) { did -a autojoin.editchan 5 $readini(scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini,$did(autojoin,4).seltext,$did(autojoin,6).seltext) }
+}
+
+ON *:DIALOG:autojoin.editchan:SCLICK:6: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the channel name! | HALT }
+  else {
+    write -l $+ $did(autojoin,6).sel scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \ [ $+ [ $did(autojoin,4).seltext ] $+ ] .txt $did(3).text
+    if ($did(5).text) { .writeini scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini $did(autojoin,4).seltext $did(autojoin,6).seltext $did(5).text }
+    if (!$did(5).text) { .remini scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini $did(autojoin,4).seltext $did(autojoin,6).seltext }
+    did -o autojoin 6 $did(autojoin,6).sel $did(autojoin.editchan,3).text
+  }
+}
+
+ON *:DIALOG:autojoin:SCLICK:13: {
+  if ($did(6).sel) {
+    write -d $+ $did(6).sel scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \ [ $+ [ $did(4).seltext ] $+ ] .txt
+    if ($readini(scripts\aj\ [ $+ [ $did(autojoin,2).seltext ] $+ ] \key.ini,Key,$did(autojoin,6).seltext) != $null) { remini scripts\aj\ [ $+ [ $did(2).seltext ] $+ ] \key.ini $did(autojoin,4).seltext $did(6).seltext }
+    did -d autojoin 6 $did(6).sel
+  }
+}
+
+ON *:NOTICE:*Password accepted*:*: {
+  if ($nick == NickServ) {
+    if ($isfile(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+      var %x = 1
+      while (%x <= $lines(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+        var %a = $read(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt,%x)
+        if ($readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a)) { .join -n %a $readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a) }
+        else { .join -n %a }
+        inc %x
+      }
+    }
+  }
+}
+ON *:TEXT:*Password accepted*:?: {
+  if ($nick == NickServ) {
+    if ($isfile(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+      var %x = 1
+      while (%x <= $lines(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+        var %a = $read(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt,%x)
+        if ($readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a)) { .join -n %a $readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a) }
+        else { .join -n %a }
+        inc %x
+      }
+    }
+  }
+}
+
+ON *:NOTICE:*You are now identified*:*: {
+  if ($nick == NickServ) {
+    if ($isfile(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+      var %x = 1
+      while (%x <= $lines(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+        var %a = $read(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt,%x)
+        if ($readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a)) { .join -n %a $readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a) }
+        else { .join -n %a }
+        inc %x
+      }
+    }
+  }
+}
+ON *:TEXT:*You are now identified*:?: {
+  if ($nick == NickServ) {
+    if ($isfile(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+      var %x = 1
+      while (%x <= $lines(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt)) {
+        var %a = $read(scripts\aj\ [ $+ [ $me ] $+ ] \ [ $+ [ $network ] $+ ] .txt,%x)
+        if ($readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a)) { .join -n %a $readini(scripts\aj\ [ $+ [ $me ] $+ ] \key.ini,$network,%a) }
+        else { .join -n %a }
+        inc %x
+      }
+    }
+  }
+}

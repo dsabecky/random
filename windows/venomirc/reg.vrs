@@ -1,0 +1,49 @@
+;[Register Nick/Chan][2013][Viperstryker]
+
+alias reg.chan {
+  if (r isincs $chan(#).mode) { echo -a  $+ $color(info) $+ * Error: $me is already a registered channel. | HALT }
+  else { if (!$dialog(reg.chan)) { dialog -dmo reg.chan reg.chan } }
+}
+
+dialog reg.chan {
+  title "Register Channel"
+  size -1 -1 147 73
+  option dbu
+  box "Information", 1, 5 5 138 47
+  text "Channel:", 2, 15 16 22 8, right
+  edit "", 3, 39 15 100 10
+  text "Password:", 4, 12 27 25 8, right
+  edit "", 5, 39 26 100 10, pass autohs
+  text "Description:", 6, 7 39 31 8, right
+  edit "", 7, 39 37 100 10, autohs
+  button "Ok", 8, 5 55 32 12, ok
+  button "Cancel", 9, 42 55 32 12, cancel
+}
+
+ON *:DIALOG:reg.chan:SCLICK:8: {
+  if (!$did(3).text) || (!$did(5).text) || (!$did(7).text) { echo -a  $+ $color(info) $+ * You have to fill out the whole form. | HALT }
+  else { .msg ChanServ REGISTER $did(3).text $did(5).text $did(7).text }
+}
+
+alias reg.nick {
+  if (r isincs $usermode) { echo -a  $+ $color(info) $+ * Error: $me is already a registered nickname. | HALT }
+  else { if (!$dialog(reg.nick)) {  dialog -dmo reg.nick reg.nick } }
+}
+
+dialog reg.nick {
+  title "Register Nickame"
+  size -1 -1 147 65
+  option dbu
+  box "Information", 1, 5 5 138 40
+  text "Password:", 2, 10 16 25 8, right
+  edit "", 3, 37 15 100 10, pass autohs
+  text "Email:", 4, 9 31 26 8, right
+  edit "", 5, 37 30 100 10, autohs
+  button "Ok", 6, 5 48 32 12, ok
+  button "Cancel", 7, 42 48 32 12, cancel
+}
+
+ON *:DIALOG:reg.nick:SCLICK:6: {
+  if ($did(3).text == $null) || ($did(5).text == $null) { echo -a  $+ $color(info) $+ * You have to fill out the whole form. | HALT }
+  else { .msg NickServ REGISTER $did(3).text $did(5).text }
+}

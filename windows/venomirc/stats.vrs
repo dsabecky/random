@@ -1,0 +1,121 @@
+;[Statistics][2008-2014][dsabecky]
+
+alias stats { if (!$dialog(stats)) { dialog -dmo stats stats | HALT } }
+
+dialog stats {
+  title "mIRC Stats"
+  size -1 -1 200 245
+  option dbu
+  box "Version", 1, 5 5 190 25
+  box "Network Specific", 2, 5 140 190 101
+  box "Uptime", 3, 5 35 190 40
+  box "Global", 4, 5 80 190 55
+  edit "Could not hook version.", 5, 10 15 160 10, autohs
+  edit "Could not hook mIRC uptime.", 6, 10 45 160 10, autohs
+  edit "Could not hook system uptime.", 7, 10 60 160 10, autohs
+  edit "Could not hook network count.", 8, 10 90 160 10, autohs
+  edit "Could not hook channel count.", 9, 10 105 160 10, autohs
+  edit "Could not hook voice/op info.", 10, 10 120 160 10, autohs
+  edit "Could not hook away info.", 11, 10 165 160 10, autohs
+  edit "Could not hook idle info.", 12, 10 180 160 10, autohs
+  edit "Could not hook channel count.", 13, 10 195 160 10, autohs
+  edit "Could not hook channel names.", 14, 10 210 160 10, autohs
+  edit "Could not hook voice/op info.", 15, 10 225 160 10, autohs
+  combo 16, 10 150 60 10, drop
+  button "Say", 17, 172 15 20 10
+  button "Say", 18, 172 45 20 10
+  button "Say", 19, 172 60 20 10
+  button "Say", 20, 172 90 20 10
+  button "Say", 21, 172 105 20 10
+  button "Say", 22, 172 120 20 10
+  button "Say", 23, 172 165 20 10
+  button "Say", 24, 172 180 20 10
+  button "Say", 25, 172 195 20 10
+  button "Say", 26, 172 210 20 10
+  button "Say", 27, 172 225 20 10
+}
+
+ON *:DIALOG:stats:INIT:*: {
+  did -o stats 5 1 I am currently using mIRC $version $+ , venomIRC $conf.version $+ .
+  did -o stats 6 1 I have kept venomIRC open for $uptime(mirc,1) $+ .
+  did -o stats 7 1 My computer has been on for $uptime(system,1) $+ .
+  var %z 1
+  var %y 1
+  var %x 0
+  var %q 0
+  var %a 0
+  var %o 0
+  var %h 0
+  var %v 0
+  while (%z <= $scon(0)) {
+    scon %z
+    did -a stats 16 $network
+    var %y 1
+    inc %x $chan(0)
+    while (%y <= $chan(0)) {
+      $iif(~ isin $nick($chan(%y),$me).pnick,inc %q)
+      $iif(& isin $nick($chan(%y),$me).pnick,inc %a)
+      $iif($me isop $chan(%y),inc %o)
+      $iif(% isin $nick($chan(%y),$me).pnick,inc %h)
+      $iif($me isvoice $chan(%y),inc %v)
+      inc %y
+    }
+    inc %z
+  }
+  did -o stats 8 1 I am currently on %z $iif(%z == 1,network,networks) $+ .
+  did -o stats 9 1 I am currently on %x $iif(%a == 1,channel,channels) on %z $iif(%z == 1,network,networks) $+ .
+  did -o stats 10 1 I have %q OWNER(~), %a PROTECTED OP(&), %o OP(@), %h HALF OP(%), and %v VOICE(+) globally.
+}
+
+ON *:DIALOG:stats:SCLICK:16: {
+  scon $did(stats,16).sel
+  did -o stats 11 1 I $iif($awaymsg,am,am not) away on $did(stats,16).seltext $iif($awaymsg,$+ :) $awaymsg $+ .
+  did -o stats 12 1 I have been idle for $duration($idle) on $did(stats,16).seltext $+ .
+  did -o stats 13 1 I am currently in $chan(0) $iif($chan(0) == 1,channel,channels) on $did(stats,16).seltext $+ .
+
+  var %z 1
+  var %y
+
+  var %q 0
+  var %a 0
+  var %o 0
+  var %h 0
+  var %v 0
+
+  while (%z <= $chan(0)) {
+    $iif(~ isin $nick($chan(%z),$me).pnick,inc %q)
+    $iif(& isin $nick($chan(%z),$me).pnick,inc %a)
+    $iif($me isop $chan(%z),inc %o)
+    $iif(% isin $nick($chan(%z),$me).pnick,inc %h)
+    $iif($me isvoice $chan(%z),inc %v)
+    if (%z == 1 && $chan(0) == 1) { var %y = $chan(%z) $+ . | inc %z }
+    elseif (%z == 1 && $chan(0) > 1) { var %y = %y $chan(%z) | inc %z }
+    elseif (%z == $chan(0)) { var %y %y $+ , and $chan(%z) $+ . | inc %z }
+    else { var %y %y $+ , $chan(%z) | inc %z }
+
+  }
+  did -o stats 14 1 $iif($chan(0) == 0,I am not in any channels on $did(stats,16).text $+ .,I am in the following channels on $did(stats,16).seltext $+ $chr(58) %y)
+  did -o stats 15 1 I have %q OWNER(~), %a PROTECTED OP(&), %o OP(@), %h HALF OP(%), and %v VOICE(+) on $did(stats,16).text $+ .
+}
+
+ON *:DIALOG:stats:SCLICK:17: { msg $active $did(5).text }
+
+ON *:DIALOG:stats:SCLICK:18: { msg $active $did(6).text }
+
+ON *:DIALOG:stats:SCLICK:19: { msg $active $did(7).text }
+
+ON *:DIALOG:stats:SCLICK:20: { msg $active $did(8).text }
+
+ON *:DIALOG:stats:SCLICK:21: { msg $active $did(9).text }
+
+ON *:DIALOG:stats:SCLICK:22: { msg $active $did(10).text }
+
+ON *:DIALOG:stats:SCLICK:23: { msg $active $did(11).text }
+
+ON *:DIALOG:stats:SCLICK:24: { msg $active $did(12).text }
+
+ON *:DIALOG:stats:SCLICK:25: { msg $active $did(13).text }
+
+ON *:DIALOG:stats:SCLICK:26: { msg $active $did(14).text }
+
+ON *:DIALOG:stats:SCLICK:27: { msg $active $did(15).text }
