@@ -4,7 +4,7 @@ DISABLE_AUTO_TITLE="true"
 HISTFILE="~/.zsh_history"
 HYPHEN_INSENSITIVE="true"
 ZSH_DISABLE_COMPFIX="true"
-
+ 
 # cursebreaker
 export CURSEBREAKER_PATH='/Applications/World of Warcraft/_retail_/World of Warcraft.app'
 
