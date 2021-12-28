@@ -1,0 +1,28 @@
+;[Hex][2014][dsabecky]
+
+alias hex {
+  var %hex, %i = 1
+
+  bset -t &hex 1 $1
+
+  while ($bvar(&hex,%i) != $null) {
+    %hex = %hex $+ $base($ifmatch,10,16,2)
+    inc %i
+  }
+
+  bunset &hex
+  return %hex
+}
+
+alias unhex {
+  var %i = 1, %hex
+
+  while ($mid($1,$calc(%i * 2 - 1),2) != $null) {
+    bset &hex %i $base($ifmatch,16,10)
+    inc %i
+  }
+
+  %hex = $bvar(&hex,1-).text
+  bunset &hex
+  return %hex
+}

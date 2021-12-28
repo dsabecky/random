@@ -1,0 +1,223 @@
+;[Messages][2008-2013][Viperstryker]
+
+alias ban.config { dialog -dmo ban ban }
+
+dialog ban {
+  title "Ban Configuration - /ban.config"
+  size -1 -1 169 231
+  option dbu
+  box "Configuration", 1, 5 5 160 208
+  list 2, 10 15 150 200, vsbar
+  button "Add", 3, 5 215 32 12
+  button "Remove", 4, 40 215 32 12
+}
+
+ON *:DIALOG:ban:INIT:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\msg\bans.txt)) {
+    did -a ban 2 $read(scripts\msg\bans.txt,n,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:ban:SCLICK:3: { dialog -dmo ban.add ban.add }
+
+dialog ban.add {
+  title "Ban Configuration - Add"
+  size -1 -1 166 46
+  option dbu
+  box "Add Ban", 1, 5 5 157 24
+  edit "", 2, 10 15 150 10, autohs
+  button "Ok", 3, 5 30 32 12, ok
+  button "Cancel", 4, 40 30 32 12, cancel
+}
+
+ON *:DIALOG:ban.add:SCLICK:3: {
+  if (!$did(2).text) { echo -a  $+ $color(info) $+ * Error: You must include your message! | HALT }
+  else { did -a ban 2 $did(2).text | write scripts\msg\bans.txt $did(2).text }
+}
+
+ON *:DIALOG:ban:SCLICK:4: {
+  if ($did(2).seltext) {
+    write -d $+ $did(2).sel scripts\msg\bans.txt
+    did -d ban 2 $did(2).sel
+  }
+}
+
+alias kick.config { dialog -dmo kick kick }
+
+dialog kick {
+  title "Kick Configuration - /kick.config"
+  size -1 -1 169 231
+  option dbu
+  box "Configuration", 1, 5 5 160 208
+  list 2, 10 15 150 200, vsbar
+  button "Add", 3, 5 215 32 12
+  button "Remove", 4, 40 215 32 12
+}
+
+ON *:DIALOG:kick:INIT:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\msg\kicks.txt)) {
+    did -a kick 2 $read(scripts\msg\kicks.txt,n,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:kick:SCLICK:3: { dialog -dmo kick.add kick.add }
+
+dialog kick.add {
+  title "Kick Configuration - Add"
+  size -1 -1 166 46
+  option dbu
+  box "Add Kick", 1, 5 5 157 24
+  edit "", 2, 10 15 150 10, autohs
+  button "Ok", 3, 5 30 32 12, ok
+  button "Cancel", 4, 40 30 32 12, cancel
+}
+
+ON *:DIALOG:kick.add:SCLICK:3: {
+  if (!$did(2).text) { echo -a  $+ $color(info) $+ * Error: You must include your message! | HALT }
+  else { did -a kick 2 $did(2).text | write scripts\msg\kicks.txt $did(2).text }
+}
+
+ON *:DIALOG:kick:SCLICK:4: {
+  if ($did(2).seltext) {
+    write -d $+ $did(2).sel scripts\msg\kicks.txt
+    did -d kick 2 $did(2).sel
+  }
+}
+
+alias quit.config { dialog -dmo quit quit }
+
+dialog quit {
+  title "Quit Configuration - /quit.config"
+  size -1 -1 172 215
+  option dbu
+  box "Configuration", 1, 5 5 65 25
+  radio "Static", 2, 10 15 25 8
+  radio "Random", 3, 35 15 30 8
+  box "Messages", 4, 4 35 163 162
+  text "Static:", 5, 10 46 17 8
+  edit "", 6, 10 55 150 10, autohs
+  text "Random:", 7, 10 70 22 8
+  list 8, 10 80 150 100, hsbar vsbar
+  button "Add", 9, 10 180 20 10
+  button "Edit", 10, 30 180 20 10
+  button "Remove", 11, 50 180 28 10
+  button "Save", 12, 5 200 32 12, ok
+  button "Cancel", 13, 38 200 32 12, cancel
+}
+
+ON *:DIALOG:quit:INIT:*: {
+  if ($read(scripts\msg\quits.txt,1) == Static) { did -c quit 2 }
+  if ($read(scripts\msg\quits.txt,1) == Random) { did -c quit 3 }
+  did -a quit 6 $read(scripts\msg\quits.txt,n,3)
+  var %x = 4
+  while (%x <= $lines(scripts\msg\quits.txt)) {
+    did -a quit 8 $read(scripts\msg\quits.txt,n,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:quit:SCLICK:9: { dialog -dmo quit.add quit.add }
+
+dialog quit.add {
+  title "Quit Configuration - Add Message"
+  size -1 -1 120 60
+  option dbu
+  box "Add Message", 1, 5 5 110 35
+  text "Message:", 2, 10 15 40 8
+  edit "", 3, 10 25 100 10, autohs
+  button "Save", 4, 5 45 32 12, ok
+  button "Cancel", 5, 40 45 32 12, cancel
+}
+
+ON *:DIALOG:quit.add:SCLICK:4: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the message! | HALT }
+  else { .write scripts\msg\quits.txt $did(3).text | did -a quit 8 $did(3).text }
+}
+
+ON *:DIALOG:quit:SCLICK:10: {
+  if (!$did(8).sel) { echo -a  $+ $color(info) $+ * Error: You must select the message you want to edit! | HALT }
+  else { dialog -dmo quit.edit quit.edit }
+}
+
+dialog quit.edit {
+  title "Quit Configuration - Edit Message"
+  size -1 -1 120 60
+  option dbu
+  box "Edit Message", 1, 5 5 110 35
+  text "Message:", 2, 10 15 40 8
+  edit "", 3, 10 25 100 10, autohs
+  button "Save", 4, 5 45 32 12, ok
+  button "Cancel", 5, 40 45 32 12, cancel
+}
+
+ON *:DIALOG:quit.edit:INIT:*: {
+  did -a quit.edit 3 $did(quit,8).seltext
+}
+
+ON *:DIALOG:quit.edit:SCLICK:4: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the message! | HALT }
+  else { .write -l $+ $calc($did(quit,8).sel + 3) scripts\msg\quits.txt $did(3).text | did -o quit 8 $did(quit,8).sel $did(3).text }
+}
+
+ON *:DIALOG:quit:SCLICK:11: {
+  if ($did(8).sel) { .write -d $+ $calc($did(8).sel + 3) scripts\msg\quits.txt | did -d quit 8 $did(8).sel }
+}
+
+ON *:DIALOG:quit:SCLICK:12: {
+  if ($did(2).state == 1) { .write -l1 scripts\msg\quits.txt Static | .write -l2 scripts\msg\quits.txt $did(6).text }
+  if ($did(3).state == 1) { .write -l1 scripts\msg\quits.txt Random | .write -l2 scripts\msg\quits.txt $eval($read(scripts\msg\quits.txt,n,$rand(4,$lines(scripts\msg\quits.txt))),0) }
+  .write -l3 scripts\msg\quits.txt $did(6).text
+}
+
+alias slap.config { dialog -dmo slap slap }
+
+alias slap {
+  if (!$1) { echo -a  $+ $color(info) $+ * Syntax: /slap <user> | HALT }
+  else { describe $active $read(scripts\msg\slaps.txt) | HALT }
+}
+
+dialog slap {
+  title "Slap Configuration - /slap.config"
+  size -1 -1 169 231
+  option dbu
+  box "Configuration", 1, 5 5 160 208
+  list 2, 10 15 150 200, vsbar
+  button "Add", 3, 5 215 32 12
+  button "Remove", 4, 40 215 32 12
+}
+
+ON *:DIALOG:slap:INIT:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\msg\slaps.txt)) {
+    did -a slap 2 $read(scripts\msg\slaps.txt,n,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:slap:SCLICK:3: { dialog -dmo slap.add slap.add }
+
+dialog slap.add {
+  title "Slap Configuration - Add"
+  size -1 -1 166 46
+  option dbu
+  box "Add Slap", 1, 5 5 157 24
+  edit "", 2, 10 15 150 10, autohs
+  button "Ok", 3, 5 30 32 12, ok
+  button "Cancel", 4, 40 30 32 12, cancel
+}
+
+ON *:DIALOG:slap.add:SCLICK:3: {
+  if (!$did(2).text) { echo -a  $+ $color(info) $+ * Error: You must include your message! | HALT }
+  else { did -a slap 2 $did(2).text | write scripts\msg\slaps.txt $did(2).text }
+}
+
+ON *:DIALOG:slap:SCLICK:4: {
+  if ($did(2).seltext) {
+    write -d $+ $did(2).sel scripts\msg\slaps.txt
+    did -d slap 2 $did(2).sel
+  }
+}

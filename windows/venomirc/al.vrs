@@ -1,0 +1,141 @@
+;[Auto Login][2008-2013][Viperstryker]
+
+alias al { if ($readini(scripts\config.ini,scripts,al) == Enabled) { if (!$dialog(autologin)) { dialog -dmo autologin autologin } } }
+
+dialog autologin {
+  title "Auto Login - /al"
+  size -1 -1 155 186
+  option dbu
+  box "Networks", 1, 5 5 70 160
+  list 2, 10 15 60 150, vsbar
+  box "Nicknames", 3, 80 5 70 160
+  list 4, 85 15 60 150, vsbar
+  button "Add", 5, 5 170 20 10
+  button "Remove", 6, 25 170 28 10
+  button "Add", 7, 80 170 20 10
+  button "Edit", 8, 100 170 20 10
+  button "Remove", 9, 120 170 28 10
+}
+
+
+ON *:DIALOG:autologin:INIT:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\al\al.txt)) {
+    did -a autologin 2 $read(scripts\al\al.txt,%x)
+    inc %x
+  }
+}
+
+ON *:DIALOG:autologin:SCLICK:2: {
+  did -r autologin 4
+  if ($did(2).seltext) {
+    var %x = 2
+    while (%x <= $lines(scripts\al\ [ $+ [ $did(2).seltext ] $+ ] .ini)) {
+      var %a = $calc($pos($read(scripts\al\ [ $+ [ $did(2).seltext ] $+ ] .ini,%x),=,1) - 1)
+      var %b = $left($read(scripts\al\ [ $+ [ $did(2).seltext ] $+ ] .ini,%x),%a)
+      did -a autologin 4 %b
+      inc %x
+    }
+  }
+}
+
+ON *:DIALOG:autologin:SCLICK:5: { dialog -dmo autologin.addnet autologin.addnet }
+
+dialog autologin.addnet {
+  title "Auto Login - Add Network"
+  size -1 -1 120 60
+  option dbu
+  box "Add Network", 1, 5 5 110 35
+  text "Network Name:", 2, 10 15 40 8
+  edit "", 3, 10 25 100 10, autohs
+  button "Save", 4, 5 45 32 12, ok
+  button "Cancel", 5, 40 45 32 12, cancel
+}
+
+ON *:DIALOG:autologin.addnet:SCLICK:4: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * Error: You must include the network name! | HALT }
+  else { write scripts\al\al.txt $did(3).text | did -a autologin 2 $did(3).text | .fopen -n 1 scripts\al\ [ $+ [ $did(3).text ] $+ ] .ini | .fclose 1 }
+}
+
+ON *:DIALOG:autologin:SCLICK:6: {
+  if ($did(2).seltext) { write -d $+ $did(2).sel scripts\al\al.txt | .remove scripts\al\ [ $+ [ $did(2).seltext ] $+ ] .ini | did -d autologin 2 $did(2).sel | did -r autologin 4 }
+}
+
+ON *:DIALOG:autologin:SCLICK:7: {
+  if (!$did(2).sel) { echo -a  $+ $color(info) $+ * Error: You must select a network before adding a nickname! | HALT }
+  else { dialog -dmo autologin.addnick autologin.addnick }
+}
+
+dialog autologin.addnick {
+  title "Auto Login - Add Nickname"
+  size -1 -1 120 85
+  option dbu
+  box "Add Nickname", 1, 5 5 110 55
+  text "Nickname:", 2, 10 15 25 8
+  edit "", 3, 10 25 100 10, autohs
+  text "Password:", 4, 10 35 25 8
+  edit "", 5, 10 45 100 10, pass autohs
+  button "Save", 6, 5 65 32 12, ok
+  button "Cancel", 7, 40 65 32 12, cancel
+}
+
+
+ON *:DIALOG:autologin.addnick:SCLICK:6: {
+  if (!$did(3).text) || (!$did(5).text) { echo -a  $+ $color(info) $+ * Error: You must include your nickname and password! | HALT }
+  else { writeini scripts\al\ [ $+ [ $did(autologin,2).seltext ] $+ ] .ini AutoLogin $did(3).text $pass.encode($did(5).text) | did -a autologin 4 $did(3).text }
+}
+
+ON *:DIALOG:autologin:SCLICK:8: {
+  if ($did(4).seltext) {
+    dialog -dmo autologin.editnick autologin.editnick
+  }
+}
+
+dialog autologin.editnick {
+  title "Auto Login - Edit Nickname"
+  size -1 -1 120 85
+  option dbu
+  box "Edit Nickname", 1, 5 5 110 55
+  text "Nickname:", 2, 10 15 25 8
+  edit "", 3, 10 25 100 10, autohs
+  text "Password:", 4, 10 35 25 8
+  edit "", 5, 10 45 100 10, pass autohs
+  button "Save", 6, 5 65 32 12, ok
+  button "Cancel", 7, 40 65 32 12, cancel
+}
+
+ON *:DIALOG:autologin.editnick:INIT:*: {
+  did -a autologin.editnick 3 $did(autologin,4).seltext
+  did -a autologin.editnick 5 $pass.decode($readini(scripts\al\ [ $+ [ $did(autologin,2).seltext ] $+ ] .ini,AutoLogin,$did(autologin,4).seltext))
+}
+
+ON *:DIALOG:autologin.editnick:SCLICK:6: {
+  if (!$did(3).text) || (!$did(5).text) { echo -a  $+ $color(info) $+ * Error: All fields must be filled out! }
+  else {
+    writeini scripts\al\ [ $+ [ $did(autologin,2).seltext ] $+ ] .ini autologin $did(3).text $pass.encode($did(5).text)
+    did -a autologin 4 $did(3).text
+    remini scripts\al\ [ $+ [ $did(autologin,2).seltext ] $+ ] .ini autologin $did(autologin,4).seltext
+    did -d autologin 4 $did(autologin,4).sel
+  }
+}
+
+ON *:DIALOG:autologin:SCLICK:9: {
+  if ($did(4).seltext) { .remini scripts\al\ [ $+ [ $did(2).seltext ] $+ ] .ini AutoLogin $did(4).seltext | did -d autologin 4 $did(4).sel }
+}
+
+ON *:NOTICE:*This nickname is registered*:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\al\al.txt)) {
+    var %a = $read(scripts\al\al.txt,%x)
+    if ($readini(scripts\al\ [ $+ [ %a ] $+ ] .ini,AutoLogin,$me)) { .msg NickServ IDENTIFY $pass.decode($readini(scripts\al\ [ $+ [ %a ] $+ ] .ini,AutoLogin,$me)) | HALT }
+    inc %x
+  }
+}
+ON *:TEXT:*This nickname is registered*:*: {
+  var %x = 1
+  while (%x <= $lines(scripts\al\al.txt)) {
+    var %a = $read(scripts\al\al.txt,%x)
+    if ($readini(scripts\al\ [ $+ [ %a ] $+ ] .ini,AutoLogin,$me)) { .msg NickServ IDENTIFY $pass.decode($readini(scripts\al\ [ $+ [ %a ] $+ ] .ini,AutoLogin,$me)) | HALT }
+    inc %x
+  }
+}

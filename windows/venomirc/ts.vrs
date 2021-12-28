@@ -1,0 +1,31 @@
+;[Timestamps][2008][Viperstryker]
+
+alias ts { if ($readini(scripts\config.ini,SCRIPTS,ts) == Enabled) { if (!$dialog(timestamp)) { dialog -dmo timestamp timestamp } } }
+
+dialog timestamp {
+  title "Timestamp Config - /ts"
+  size -1 -1 152 172
+  option dbu
+  box "Configuration", 1, 5 5 143 27
+  text "Timestamp:", 2, 10 17 30 8
+  edit "", 3, 43 15 100 10, autohs
+  button "Save", 4, 5 155 32 12, ok
+  button "Cancel", 5, 40 155 32 12, cancel
+  box "Key", 6, 5 35 143 115
+  text "H - 24 Hour / No leading zero", 7, 10 45 70 8
+  text "HH - 24 Hour / Leading zero", 8, 10 55 70 8
+  text "h - 12 Hour / No leading zero", 9, 10 65 70 8
+  text "hh - 12 Hour / Leading zero", 10, 10 75 70 8
+  text "n - Minute / No leading zero", 11, 10 85 70 8
+  text "nn - Minute / Leading zero", 12, 10 95 70 8
+  text "s - Second / No leading zero", 13, 10 105 70 8
+  text "ss - Second / Leading zero", 14, 10 115 70 8
+  text "t - Single daystamp", 15, 10 125 70 8
+  text "tt - Double daystamp", 16, 10 135 70 8
+}
+
+ON *:DIALOG:timestamp:INIT:*: { did -a timestamp 3 $read(scripts\ts\ts.txt,1) }
+ON *:DIALOG:timestamp:SCLICK:4: { .write -l1 scripts\ts\ts.txt $did(3).text | ts.update }
+
+alias ts.update { .timestamp -f $read(scripts\ts\ts.txt,1) }
+ON *:START: { ts.update }

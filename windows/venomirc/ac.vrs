@@ -1,0 +1,90 @@
+;[Alarm Clock][2008][Viperstryker]
+
+alias ac { if ($readini(scripts\config.ini,SCRIPTS,ac) == Enabled) { if (!$dialog(alarm)) { dialog -dmo alarm alarm } } }
+
+dialog alarm {
+  title "Alarm Clock - /ac"
+  size -1 -1 124 98
+  option dbu
+  box "Alarm Configuration", 1, 5 6 117 25
+  check "", 2, 10 17 8 8
+  combo 3, 20 15 30 37, drop
+  text ":", 4, 51 16 1 8
+  combo 5, 53 15 30 37, drop
+  combo 6, 86 15 30 37, drop
+  box "Audio Configuration", 7, 5 34 117 45
+  text "Alarm Sound:", 8, 10 44 32 8
+  edit "", 9, 10 53 108 10, autohs
+  button "...", 10, 10 65 15 10
+  button "Save", 11, 5 82 32 12, ok
+  button "Cancel", 12, 40 82 32 12, cancel
+}
+
+ON *:DIALOG:alarm:INIT:*: {
+  var %h = 1
+  var %m = 0
+  if ($read(scripts\ac\ac.txt,1) == Enabled) { did -c alarm 2 }
+  did -ac alarm 3 $read(scripts\ac\ac.txt,2)
+  while (%h <= 12) {
+    did -a alarm 3 %h
+    inc %h
+  }
+  did -ac alarm 5 $read(scripts\ac\ac.txt,3)
+  while (%m <= 59) {
+    did -a alarm 5 %m
+    inc %m
+  }
+  did -ac alarm 6 $read(scripts\ac\ac.txt,4)
+  did -a alarm 6 AM
+  did -a alarm 6 PM
+  did -a alarm 9 $read(scripts\ac\ac.txt,5)
+}
+
+ON *:DIALOG:alarm:SCLICK:10: {
+  var %x = $sfile(sounds\,Please choose your alarm sound.)
+  if (%x) { did -ra alarm 9 %x }
+}
+
+ON *:DIALOG:alarm:SCLICK:11: {
+  if (!$isfile($did(9).text)) { echo -a  $+ $color(info) $+ * File does not exist. | HALT }
+  else {
+    if ($did(2).state == 1) { .write -l1 scripts\ac\ac.txt Enabled | .timer 1 1 ac.set }
+    if ($did(2).state == 0) { .write -l1 scripts\ac\ac.txt Disabled | .timer 1 1 ac.stop }
+    .write -l2 scripts\ac\ac.txt $did(3).seltext
+    .write -l3 scripts\ac\ac.txt $did(5).seltext
+    .write -l4 scripts\ac\ac.txt $did(6).seltext
+    .write -l5 scripts\ac\ac.txt $did(9).text
+  }
+}
+
+dialog alarm2 {
+  title "Alarm!"
+  size -1 -1 92 17
+  option dbu
+  text "Alarm has been set to go off now.", 1, 5 5 82 8
+}
+
+ON *:DIALOG:alarm2:CLOSE:*: { ac.stop }
+
+ON *:EXIT: { ac.stop }
+
+alias ac.set {
+  if ($read(scripts\ac\ac.txt,4) == PM) && ($read(scripts\ac\ac.txt,2) != 12) { var %h = $calc($read(scripts\ac\ac.txt,2) + 12) }
+  elseif ($read(scripts\ac\ac.txt,4) == AM) && ($read(scripts\ac\ac.txt,2) == 12) { var %h = 0 }
+  else { var %h = $read(scripts\ac\ac.txt,2) }
+  var %m = $read(scripts\ac\ac.txt,3)
+  echo -a  $+ $color(info) $+ * Alarm has been set to go off at $read(scripts\ac\ac.txt,2) $+ : $+ $iif($len($read(scripts\ac\ac.txt,3)) == 1,0 $+ $read(scripts\ac\ac.txt,3),$read(scripts\ac\ac.txt,3)) $read(scripts\ac\ac.txt,4) $+ .
+  .timerac -o %h $+ : $+ %m 1 1 ac.alarm
+}
+
+alias ac.alarm {
+  var %x = 1
+  splay $read(scripts\ac\ac.txt,5)
+  dialog -dmo alarm2 alarm2
+  while (%x <= 80) {
+    splay -q $read(scripts\ac\ac.txt,5)
+    inc %x
+  }
+}
+
+alias ac.stop { .write -l1 scripts\ac\ac.txt Disabled | splay stop }

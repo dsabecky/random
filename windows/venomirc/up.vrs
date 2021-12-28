@@ -1,0 +1,88 @@
+;[Uptime][2008-2013][Viperstryker]
+
+alias up { if ($readini(scripts\config.ini,SCRIPTS,up) == Enabled) { if (!$dialog(uptime)) { dialog -dmo uptime uptime } } }
+
+dialog uptime {
+  title "Uptime - /up"
+  size -1 -1 172 134
+  option dbu
+  box "Configuration", 1, 5 5 162 58
+  check "Respond to !uptime", 2, 10 15 58 8
+  text "Output", 3, 10 25 18 8
+  radio "Action", 4, 31 25 25 8
+  radio "Say", 5, 60 25 18 8
+  edit "", 6, 10 35 150 10, autohs
+  check "", 7, 10 48 6 8
+  edit "", 8, 20 46 140 10, autohs
+  button "Save", 9, 5 118 32 12, ok
+  button "Cancel", 10, 40 118 32 12, cancel
+  box "Key", 11, 5 65 162 50
+  text "$me - Your Nickname", 12, 10 75 53 8
+  text "$ol - Online Time", 13, 10 85 53 8
+  text "$sys - System Uptime", 14, 10 95 53 8
+  text "$network - Network Name", 15, 70 75 70 8
+  text "$ol.rec - Record Online Time", 16, 70 85 70 8
+  text "$sys.rec - Record System Uptime", 17, 70 95 70 8
+}
+
+ON *:DIALOG:uptime:INIT:*: {
+  if ($read(scripts\up\up.txt,1) == Enable) { did -c uptime 2 }
+  if ($read(scripts\up\up.txt,2) == Action) { did -c uptime 4 }
+  if ($read(scripts\up\up.txt,2) == Message) { did -c uptime 5 }
+  did -a uptime 6 $read(scripts\up\up.txt,n,3)
+  if ($read(scripts\up\up.txt,4) == Enable) { did -c uptime 7 }
+  did -a uptime 8 $read(scripts\up\up.txt,n,5)
+}
+
+ON *:DIALOG:uptime:SCLICK:9: {
+  if ($did(2).state == 1) { .write -l1 scripts\up\up.txt Enable }
+  if ($did(2).state == 0) { .write -l1 scripts\up\up.txt Disable }
+  if ($did(4).state == 1) { .write -l2 scripts\up\up.txt Action }
+  if ($did(5).state == 1) { .write -l2 scripts\up\up.txt Message }
+  .write -l3 scripts\up\up.txt $did(6).text
+  if ($did(7).state == 1) { .write -l4 scripts\up\up.txt Enable }
+  if ($did(7).state == 0) { .write -l4 scripts\up\up.txt Disable }
+  .write -l5 scripts\up\up.txt $did(8).text
+}
+
+alias ol { return $duration($uptime) }
+alias sys { return $uptime(system,1) }
+
+alias ol.rec {
+  if ($uptime > $read(scripts\up\up.txt,6)) { .write -l6 scripts\up\up.txt $uptime }
+  return $duration($read(scripts\up\up.txt,6))
+}
+
+alias sys.rec {
+  if ($calc($ticks / 1000) > $read(scripts\up\up.txt,7)) { .write -l7 scripts\up\up.txt $calc($ticks / 1000) }
+  return $duration($read(scripts\up\up.txt,7))
+}
+
+alias up.timer { .sys.rec | .ol.rec | .timer -o 1 5 up.timer }
+ON *:START: { up.timer }
+
+ON *:TEXT:$(!uptime $me):#: {
+  if (!%uptime. [ $+ [ # ] ]) {
+    if ($read(scripts\up\up.txt,1) == Enable) {
+      if ($read(scripts\up\up.txt,2) == Action) {
+        if ($read(scripts\up\up.txt,4) == Enable) { set %uptime. [ $+ [ # ] ] X | describe # $read(scripts\up\up.txt,3) | describe # $read(scripts\up\up.txt,5) | .timer 1 10 unset %uptime. [ $+ [ # ] ] | HALT }
+        else { set %uptime. [ $+ [ # ] ] X | describe # $read(scripts\up\up.txt,3) | .timer 1 10 %uptime. [ $+ [ # ] ] | HALT }
+      }
+      else {
+        if ($read(scripts\up\up.txt,4) == Enable) { set %uptime. [ $+ [ # ] ] X | msg # $read(scripts\up\up.txt,3) | msg # $read(scripts\up\up.txt,5) | .timer 1 10 %uptime. [ $+ [ # ] ] | HALT }
+        else { set %uptime. [ $+ [ # ] ] X | msg # $read(scripts\up\up.txt,3) | .timer 1 10 %uptime. [ $+ [ # ] ] | HALT }
+      }
+    }
+  }
+}
+
+alias uptime {
+  if ($read(scripts\uptime.txt,2) == Action) {
+    if ($read(scripts\up\up.txt,4) == Enable) { describe $active $read(scripts\up\up.txt,3) | describe $active $read(scripts\up\up.txt,5) | HALT }
+    else { describe $active $read(scripts\up\up.txt,3) | HALT }
+  }
+  else {
+    if ($read(scripts\up\up.txt,4) == Enable) { msg $active $read(scripts\up\up.txt,3) | msg $active $read(scripts\up\up.txt,5) | HALT }
+    else { msg $active $read(scripts\up\up.txt,3) | HALT }
+  }
+}

@@ -1,0 +1,5 @@
+Disabled
+5
+0
+AM
+sounds\alarm.wav

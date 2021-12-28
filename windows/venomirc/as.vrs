@@ -1,0 +1,262 @@
+;[Away System][2008][Viperstryker]
+
+alias as { if ($readini(scripts\config.ini,SCRIPTS,as) == Enabled) { if (!$dialog(away)) { dialog -dmo away away } } }
+
+dialog away {
+  title "Away System - /as"
+  size -1 -1 194 221
+  option dbu
+  box "Announce", 1, 5 5 185 72
+  check "Announce", 2, 10 15 34 8
+  radio "Action", 3, 10 25 24 8
+  radio "Say", 4, 37 25 19 8
+  text "Away Format:", 5, 10 35 35 8
+  edit "", 6, 10 43 175 10, autohs
+  text "Return Format:", 7, 10 55 37 8
+  edit "", 8, 10 63 175 10
+  box "Misc Settings", 9, 5 80 185 73
+  check "Away Logger", 10, 10 90 42 8
+  text "Logger Format:", 11, 10 100 38 8
+  edit "", 12, 10 108 175 10
+  check "Nick Change", 13, 10 120 40 8
+  text "Away Suffix:", 14, 10 130 52 8
+  edit "", 15, 10 138 50 11
+  box "Keywords", 16, 5 155 185 47
+  combo 17, 10 165 70 40, drop
+  button "+", 18, 85 165 10 10
+  button "-", 19, 96 165 10 10
+  text "Message:", 20, 10 180 25 8
+  edit "", 21, 10 188 175 10
+  button "Save", 22, 5 205 32 12, ok
+  button "Cancel", 23, 40 205 32 12, cancel
+}
+
+ON *:DIALOG:away:INIT:*: {
+  if ($readini(scripts\as\away.ini,Announce,Announce) == Enable) { did -c away 2 }
+  if ($readini(scripts\as\away.ini,Announce,Style) == Action) { did -c away 3 }
+  if ($readini(scripts\as\away.ini,Announce,Style) == Say) { did -c away 4 }
+  did -a away 6 $readini(scripts\as\away.ini,n,Announce,Away)
+  did -a away 8 $readini(scripts\as\away.ini,n,Announce,Return)
+  did -b away 10
+  did -b away 11
+  did -ba away 12 $readini(scripts\as\away.ini,n,Misc,Log)
+  if ($readini(scripts\as\away.ini,Misc,NickChange) == Enable) { did -c away 13 }
+  did -a away 15 $readini(scripts\as\away.ini,n,Misc,Nick)
+  var %x = 2
+  while (%x <= $lines(scripts\as\awaymsg.ini)) {
+    var %a = $calc($pos($read(scripts\as\awaymsg.ini,%x),=,1) - 1)
+    var %b = $left($read(scripts\as\awaymsg.ini,%x),%a)
+    did -a away 17 %b
+    inc %x
+  }
+}
+
+ON *:DIALOG:away:SCLICK:17: {
+  did -ra away 21 $readini(scripts\as\awaymsg.ini,Messages,$did(17).seltext)
+}
+
+ON *:DIALOG:away:SCLICK:18: { dialog -dmo away.keyadd away.keyadd }
+
+ON *:DIALOG:away:SCLICK:19: {
+  if ($did(17).seltext != Default) {
+    .remini scripts\as\awaymsg.ini Messages $did(17).seltext
+    did -d away 17 $did(17).sel
+    did -r away 21
+  }
+}
+
+dialog away.keyadd {
+  title "Add Keyword"
+  size -1 -1 141 76
+  option dbu
+  box "Keyword Configuration", 1, 5 5 133 51
+  text "Keyword:", 2, 10 15 24 8
+  edit "", 3, 10 23 50 10, autohs
+  text "Message:", 4, 10 35 50 8
+  edit "", 5, 10 43 125 10, autohs
+  button "Ok", 6, 5 60 32 12, ok
+  button "Cancel", 7, 40 60 32 12, cancel
+}
+
+ON *:DIALOG:away.keyadd:SCLICK:6: {
+  if (!$did(3).text) { echo -a  $+ $color(info) $+ * You must include your keyword. | HALT }
+  if (!$did(5).text) { echo -a  $+ $color(info) $+ * You must include your keyword message. | HALT }
+  else { .writeini scripts\as\awaymsg.ini Messages $did(3).text $did(5).text }
+  did -a away 17 $did(3).text
+}
+
+ON *:DIALOG:away:EDIT:21: {
+  if ($did(17).sel) {
+    .writeini scripts\as\awaymsg.ini Messages $did(17).seltext $did(21).text
+  }
+}
+
+ON *:DIALOG:away:SCLICK:22: {
+  if ($did(2).state == 1) { .writeini scripts\as\away.ini Announce Announce Enable }
+  if ($did(2).state == 0) { .writeini scripts\as\away.ini Announce Announce Disable }
+  if ($did(3).state == 1) { .writeini scripts\as\away.ini Announce Style Action }
+  if ($did(4).state == 1) { .writeini scripts\as\away.ini Announce Style Say }
+  .writeini scripts\as\away.ini Announce Away $did(6).text
+  .writeini scripts\as\away.ini Announce Return $did(8).text
+  ;if ($did(10).state == 1) { .writeini scripts\as\away.ini Misc Logger Enable }
+  ;if ($did(10).state == 0) { .writeini scripts\as\away.ini Misc Logger Disable }
+  ;.writeini scripts\as\away.ini Misc Log $did(12).text
+  if ($did(13).state == 1) { .writeini scripts\as\away.ini Misc NickChange Enable }
+  if ($did(13).state == 0) { .writeini scripts\as\away.ini Misc NickChange Disable }
+  .writeini scripts\as\away.ini Misc Nick $did(15).text
+}
+
+ON *:START: {
+  if ($away.status == Away) {
+    away.timerstop
+    writeini scripts\as\away.ini Away Status Available
+    writeini scripts\as\away.ini Away Message Available
+    unset %pm.*
+  }
+}
+ON *:CONNECT: {
+  if ($away.status == Away) {
+    if ($away.announce == Enable) { away /rcon | HALT }
+    else { away $away.msg }
+  }
+}
+alias away.timer {
+  var %x = $readini(scripts\as\away.ini,Announce,Time)
+  inc %x 5
+  writeini scripts\as\away.ini Announce Time %x
+  .timeraway -o 1 5 away.timer
+}
+alias away.timerstop { .timeraway off | writeini scripts\as\away.ini Announce Time 0 }
+alias -l away.status { return $readini(scripts\as\away.ini,Away,Status) }
+alias -l away.announce { return $readini(scripts\as\away.ini,Announce,Announce) }
+alias -l away.away { return $readini(scripts\as\away.ini,Announce,Away) }
+alias -l away.msg { return $readini(scripts\as\away.ini,Away,Message) }
+alias -l away.nick { return $readini(scripts\as\away.ini,Misc,Nick) }
+alias -l away.nickchange { return $readini(scripts\as\away.ini,Misc,NickChange) }
+alias -l away.return { return $readini(scripts\as\away.ini,Announce,Return) }
+alias -l away.style { return $readini(scripts\as\away.ini,Announce,Style) }
+alias -l away.time { return $duration($readini(scripts\as\away.ini,Announce,Time)) }
+ON *:TEXT:*:?: {
+  if ($away.status == Away) {
+    if ($nick != NickServ) && ($nick != ChanServ) && ($nick != MemoServ) && ($nick != OperServ) && ($nick != HostServ) && ($readini(scripts\as\away.ini,ignore,$nick) != x) {
+      if (!%pm. [ $+ [ $nick ] ]) { .msg $nick I am currenly away: $away.msg (gone: $away.time $+ ) | set %pm. [ $+ [ $nick ] ] X | HALT }
+    }
+  }
+}
+ON *:ACTION:$(* $+ $me $+ *):?: {
+  if ($away.status == Away) {
+    if ($nick != NickServ) && ($nick != ChanServ) && ($nick != MemoServ) && ($nick != OperServ) && ($nick != HostServ) && ($readini(scripts\as\away.ini,ignore,$nick) != x) {
+      if (!%pm. [ $+ [ $nick ] ]) { .msg $nick I am currenly away: $away.msg (gone: $away.time $+ ) | set %pm. [ $+ [ $nick ] ] X | HALT }
+    }
+  }
+}
+ON *:TEXT:$(* $+ $me $+ *):#: {
+  if ($away.status == Away) {
+    if ($nick != NickServ) && ($nick != ChanServ) && ($nick != MemoServ) && ($nick != OperServ) && ($nick != HostServ) && ($readini(scripts\as\away.ini,ignore,$nick) != x) {
+      if (!%pm. [ $+ [ $nick ] ]) { .msg $nick I am currenly away: $away.msg (gone: $away.time $+ ) | set %pm. [ $+ [ $nick ] ] X | HALT }
+    }
+  }
+}
+ON *:ACTION:$(* $+ $me $+ *):#: {
+  if ($away.status == Away) {
+    if ($nick != NickServ) && ($nick != ChanServ) && ($nick != MemoServ) && ($nick != OperServ) && ($nick != HostServ) && ($readini(scripts\as\away.ini,ignore,$nick) != x) {
+      if (!%pm. [ $+ [ $nick ] ]) { .msg $nick I am currenly away: $away.msg (gone: $away.time $+ ) | set %pm. [ $+ [ $nick ] ] X | HALT }
+    }
+  }
+}
+alias away {
+  if ($1 = /rcon) {
+    .away $away.msg
+    if ($away.nick !isin $me) && ($away.nickchange == Enable) { .nick $me $+ $away.nick }
+    HALT
+  }
+  if (%away) {
+    var %x = 1
+    while (%x <= $scon(0)) {
+      scon %x
+      .away
+      if ($away.nickchange == Enable) { .nick $remove($me,$away.nick) }
+      if ($away.announce == Enable) {
+        if ($away.style == Action) { ame $away.return }
+        if ($away.style == Say) { amsg $away.return }
+      }
+      if (%x == $scon(0)) {
+        writeini scripts\as\away.ini Away Status Available
+        writeini scripts\as\away.ini Away Message Available
+        away.timerstop
+        unset %away
+      }
+      inc %x
+    }
+    HALT
+  }
+  if (!$1) {
+    var %x = 1
+    .writeini scripts\as\away.ini Announce Time 0
+    while (%x <= $scon(0)) {
+      scon %x
+      if (%x == 1) {
+        away.timer
+        writeini scripts\as\away.ini Away Status Away
+        writeini scripts\as\away.ini Away Message $readini(scripts\as\awaymsg.ini,Messages,Default)
+      }
+      .away $away.msg
+      if ($away.nick !isin $me) && ($away.nickchange == Enable) { .nick $me $+ $away.nick }
+      if ($away.announce == Enable) {
+        if ($away.style == Action) { ame $away.away }
+        if ($away.style == Say) { amsg $away.away }
+      }
+      inc %x
+    }
+    HALT
+  }
+  if (!$readini(scripts\as\awaymsg.ini,Messages,$1)) {
+    var %x = 1
+    .writeini scripts\as\away.ini Announce Time 0
+    while (%x <= $scon(0)) {
+      scon %x
+      if (%x == 1) {
+        away.timer
+        writeini scripts\as\away.ini Away Status Away
+        writeini scripts\as\away.ini Away Message $1-
+      }
+      .away $away.msg
+      if ($away.nick !isin $me) && ($away.nickchange == Enable) { .nick $me $+ $away.nick }
+      if ($away.announce == Enable) {
+        if ($away.style == Action) { ame $away.away }
+        if ($away.style == Say) { amsg $away.away }
+      }
+      inc %x
+    }
+    HALT
+  }
+  if ($readini(scripts\as\awaymsg.ini,Messages,$1)) {
+    var %x = 1
+    .writeini scripts\as\away.ini Announce Time 0
+    while (%x <= $scon(0)) {
+      scon %x
+      if (%x == 1) {
+        away.timer
+        writeini scripts\as\away.ini Away Status Away
+        writeini scripts\as\away.ini Away Message $readini(scripts\as\awaymsg.ini,Messages,$1)
+      }
+      .away $away.msg
+      if ($away.nick !isin $me) && ($away.nickchange == Enable) { .nick $me $+ $away.nick }
+      if ($away.announce == Enable) {
+        if ($away.style == Action) { ame $away.away }
+        if ($away.style == Say) { amsg $away.away }
+      }
+      inc %x
+    }
+    HALT
+  }
+}
+alias back {
+  if ($away.status == Available) { echo -a  $+ $color(info) $+ * You are not currently away! | HALT }
+  else {
+    unset %pm.*
+    set %away X
+    away
+    unset %away
+  }
+}

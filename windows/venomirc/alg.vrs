@@ -1,0 +1,26 @@
+; algorithm (alg.vrs)
+; 2014 - dsabecky
+
+alias crcsum {
+  var %z 1 | var %y $script(0)
+
+  while (%z <= %y) { var %x %x $+ $crc($script(%z),2) | inc %z }
+  var %w $crc(%x,0) | echo -a %w
+}
+
+alias hex {
+  var %hex, %i = 1 | bset -t &hex 1 $1
+
+  while ($bvar(&hex,%i) != $null) { %hex = %hex $+ $base($ifmatch,10,16,2) | inc %i }
+  bunset &hex | return %hex
+}
+
+alias unhex {
+  var %i = 1, %hex
+
+  while ($mid($1,$calc(%i * 2 - 1),2) != $null) { bset &hex %i $base($ifmatch,16,10) | inc %i }
+  %hex = $bvar(&hex,1-).text | bunset &hex | return %hex
+}
+
+alias pass.encode { return $encode($encode($hex($1-),m),m) }
+alias pass.decode { return $unhex($decode($decode($1-,m),m)) }
