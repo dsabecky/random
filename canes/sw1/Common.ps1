@@ -1,23 +1,20 @@
-# check if dc01/2 or rodc
-if ($env:computername -NotMatch '^(RODC|DC0[12])$') { exit 1 }
+# Name: IsTrue
+# Description: Dummy function to see if Common.ps1 is loaded.
+# Example: IsTrue
+#####################################################################
+function IsTrue() { return $True }
 
-# check if mts/2
-if ($env:computername -NotMatch '^mts(2|)$') { exit 1 }
 
-# check if ex01/2
-if ($env:computername -NotMatch '^ex0[12]$') { exit 1 }
+# Name: IsValidHost
+# Description: Checks server name against the host type.
+# Example: IsValidHost('dc')
+#####################################################################
+function IsValidHost($Type) {
+    if ($Type -eq 'dc' -And $env:ComputerName -Match '^DC0[12]$') { return $True }
+    elseif ($Type -eq 'mts' -And $env:ComputerName -Match '^MTS(2|)$') { return $True }
+    elseif ($Type -eq 'ex' -And $env:ComputerName -Match '^EX0[12]$|IAEXET') { return $True }
+    else { return $False }
+}
 
-# java settings file
-Set-Variable javaSettings "C:\Windows\Sun\Java\Deployment\deployment.properties"
-
-# psexec (with msi installer) on remote machine
-$Remote = read-host "Enter computer name"
-psexec \\$Remote -u $(whoami) -d -s cmd /c "msiexec /I "c:\full\path\here\.msi""
-
-# import active directory module
-Import-Module ActiveDirectory
-if (-Not (Get-Module -Name ActiveDirectory)) { exit }
-
-# import exchange module
-. C:\Program Files\Microsoft\Exchange Server\V14\Bin\RemoteExchange.ps1
-Connect-ExchangeServer $env:computername
+$Exec = "\\DC01\Software\SabeckyScripts"
+$AdminRegex = "^Administrator$|^Public$|^adm\.(canes|internal)$"
