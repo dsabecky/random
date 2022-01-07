@@ -1,0 +1,1 @@
+Adds passing nicknames to Raid and Party
