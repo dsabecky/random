@@ -1,3 +1,10 @@
+# Name: IsTrue
+# Description: Dummy function to see if Common.ps1 is loaded.
+# Example: IsTrue
+#####################################################################
+function IsTrue() { return $True }
+
+
 # Name: IsValidHost
 # Description: Checks server name against the host type.
 # Example: IsValidHost('dc')
@@ -10,3 +17,4 @@ function IsValidHost($Type) {
 }
 
 $Exec = "\\DC01\Software\SabeckyScripts"
+$AdminRegex = "^Administrator$|^Public$|^adm\.(canes|internal)$"

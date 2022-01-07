@@ -1,0 +1,14 @@
+#C-TL.dsh
+set verbose on
+
+add volume F:
+add volume T:
+add volume U:
+
+begin backup
+create
+end backup
+
+delete shadows all
+
+exit
