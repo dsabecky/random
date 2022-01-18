@@ -15,7 +15,7 @@ Replace the following file:
 - [X] Hunter
 - [ ] Mage
 - [X] Monk
-- [ ] Paladin
+- [X] Paladin
 - [ ] Priest
 - [X] Rogue
 - [ ] Shaman
