@@ -10,14 +10,14 @@ Replace the following file:
 
 # Class Progress List
 - [ ] Death Knight
-- [ ] Demon Hunter
+- [ ] Demon Hunter - 50%
 - [ ] Druid
-- [X] Hunter
+- [ ] Hunter
 - [ ] Mage
 - [X] Monk
 - [X] Paladin
 - [ ] Priest
 - [X] Rogue
-- [ ] Shaman
+- [ ] Shaman - 33%
 - [ ] Warlock
 - [ ] Warrior
