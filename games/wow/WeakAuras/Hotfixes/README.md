@@ -1,0 +1,32 @@
+## All of the auras not written by myself still include embedded links to their respective wago page
+
+# Included WeakAuras
+> !keys (Timewalking Edit by Haldu) by Luckyone
+> Algan Identifier in Najatar (Rift Farming Edit)
+> Auto Invite Accepeter
+> Bron Announcer
+> Simple Combat Logger
+> Auto Duel Decline
+> Creature Facts (bat, cat, dragon, frog, rat)
+> Group Experience Checker
+> Auto-Toggle Friendly Nameplates
+> Great Vault on Weekly Rewards
+> Guild / Communities Privacy
+> Haldu Shared (Random functions)
+> Interrupt Announcer
+> ItemBuddy (Rare Item Announcer)
+> Keystone Statistics (!keystats)
+> Max Camera Distance (CVar Edit)
+> Mists of Tirne Scithe Auto-Maze by Eleven
+> Mouse Cursor Circle
+> NW Goliath Text Selector by Aski
+> Painsmith - Spiked Ball Marker by Exality
+> Pumpkin Cancel
+> Purge Announcer
+> Summon Autoaccepter (disabled by default)
+> Top 10 Mythic+ Runs
+> UwU Kitty <^.^>
+> UwU Kitty Sound Mute
+> Required M+ Percentages
+> DEBUG: Chat_Msg_Addon (disabled by default)
+> DEBUG: Combat_Log_Event_Unfiltered (disabled by default)
