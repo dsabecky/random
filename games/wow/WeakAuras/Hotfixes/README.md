@@ -1,7 +1,7 @@
 ## All of the auras not written by myself still include embedded links to their respective wago page
 
 # Included WeakAuras
-- !keys (Timewalking Edit by Haldu) by Luckyone
+- Advertisements
 - Algan Identifier in Najatar (Rift Farming Edit)
 - Auto Invite Accepeter
 - Bron Announcer
@@ -15,6 +15,7 @@
 - Haldu Shared (Random functions)
 - Interrupt Announcer
 - ItemBuddy (Rare Item Announcer)
+- !keys (Timewalking Edit by Haldu) by Luckyone
 - Keystone Statistics (!keystats)
 - Max Camera Distance (CVar Edit)
 - Mists of Tirne Scithe Auto-Maze by Eleven
