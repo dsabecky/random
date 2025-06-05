@@ -9,7 +9,6 @@ from discord.ext.commands import Greedy, Context
 
 # system
 import docker
-import socket
 
 # hathor internals
 from func import ERROR_CODES, FancyError # error handling
@@ -44,6 +43,11 @@ class Docker(commands.Cog):
         container = self.docker_client.containers.get(container_id)
         return container.name
 
+
+    ####################################################################
+    # Command triggers
+    ####################################################################
+
     @commands.group(name="docker")
     @requires_owner_perms()
     async def docker(self, ctx):
@@ -55,14 +59,14 @@ class Docker(commands.Cog):
     @requires_owner_perms()
     async def trigger_docker_ps(self, ctx):
         """List running Docker containers."""
-        containers = self.docker_client.containers.list()
+        containers = sorted(self.docker_client.containers.list(), key=lambda x: x.name)
 
         if not containers:
-            await ctx.reply(embed=build_embed("Docker Containers", "No running containers.", 'p'), allowed_mentions=discord.AllowedMentions.none())
+            await ctx.reply(embed=build_embed("🐋 Docker", "🚫 No running containers.", 'p'), allowed_mentions=discord.AllowedMentions.none())
             return
         
-        msg = "\n".join(f"{i+1}. {c.name}: {c.status}" for i, c in enumerate(containers))
-        await ctx.reply(embed=build_embed("Docker Containers", msg, 'p'), allowed_mentions=discord.AllowedMentions.none())
+        msg = "\n".join(f"{i+1}. {c.name} → {c.status}" for i, c in enumerate(containers))
+        await ctx.reply(embed=build_embed("🐋 Docker", msg, 'p'), allowed_mentions=discord.AllowedMentions.none())
 
     @docker.command(name="restart")
     @requires_owner_perms()
@@ -70,7 +74,7 @@ class Docker(commands.Cog):
         """Restart a Docker container."""
         try:
             container = self.docker_client.containers.get(container_name)
-            await ctx.reply(embed=build_embed("Docker Containers", f"Restarting `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
+            await ctx.reply(embed=build_embed("🐋 Docker", f"🔄 Restarting `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
             container.restart()
 
         except Exception as e:
@@ -82,7 +86,7 @@ class Docker(commands.Cog):
         """Start a Docker container."""
         try:
             container = self.docker_client.containers.get(container_name)
-            await ctx.reply(embed=build_embed("Docker Containers", f"Starting `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
+            await ctx.reply(embed=build_embed("🐋 Docker", f"🟢 Starting `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
             container.start()
             
         except Exception as e:
@@ -98,7 +102,7 @@ class Docker(commands.Cog):
         
         try:
             container = self.docker_client.containers.get(container_name)
-            await ctx.reply(embed=build_embed("Docker Containers", f"Stopping `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
+            await ctx.reply(embed=build_embed("🐋 Docker", f"🛑 Stopping `{container_name}`.", 'g'), allowed_mentions=discord.AllowedMentions.none())
             container.stop()
 
         except Exception as e:
