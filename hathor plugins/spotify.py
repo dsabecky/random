@@ -81,7 +81,7 @@ class Spotify(commands.Cog):
             client_id=config.SPOTIFY_CLIENT_ID,
             client_secret=config.SPOTIFY_CLIENT_SECRET,
             redirect_uri=config.SPOTIFY_REDIRECT_URI,
-            scope='user-read-recently-played',
+            scope='user-top-read user-read-recently-played',
             show_dialog=True,
             cache_path=cache_path
         )
@@ -126,6 +126,10 @@ class Spotify(commands.Cog):
         parent_dir = os.path.dirname(cache_path)
         os.makedirs(parent_dir, exist_ok=True)
 
+        if not os.path.exists(cache_path):
+            await interaction.followup.send("You need to authenticate first using `/spotifyauth` in DMs.")
+            return
+
         with open(cache_path, "r") as f:
             token_info = json.load(f)
 
@@ -137,7 +141,7 @@ class Spotify(commands.Cog):
             client_id=config.SPOTIFY_CLIENT_ID,
             client_secret=config.SPOTIFY_CLIENT_SECRET,
             redirect_uri=config.SPOTIFY_REDIRECT_URI,
-            scope='user-read-recently-played',
+            scope='user-top-read user-read-recently-played',
             cache_path=cache_path
         )
         if sp_oauth.is_token_expired(token_info):
@@ -147,22 +151,32 @@ class Spotify(commands.Cog):
 
         sp = spotipy.Spotify(auth=token_info['access_token'])
 
-        try:
-            after = int((datetime.now() - timedelta(days=7)).timestamp() * 1000)
-            results = sp.current_user_recently_played(limit=50, after=after)
-            items = results.get('items', [])
-        except SpotifyException as e:
-            if e.http_status == 403 and "developer" in str(e).lower():
-                await interaction.followup.send("This Spotify application is in Developer Mode, and the developer must manually enable your access.")
-                return
-            else:
-                await interaction.followup.send("An error occurred while accessing Spotify. Please try again later.")
-                return
+        
+        items, limit, next, offset = [], 50, True, 0
+        while next:
+            try:
+                results = sp.current_user_top_tracks(limit=limit, offset=offset, time_range="short_term")
+
+            except SpotifyException as e:
+                if e.http_status == 403 and "developer" in str(e).lower():
+                    await interaction.followup.send("This Spotify application is in Developer Mode, and the developer must manually enable your access.")
+                    return
+                else:
+                    await interaction.followup.send("An error occurred while accessing Spotify. Please try again later.")
+                    return
+                
+            items.extend(results.get('items', []))
+            next  = results.get('next')
+
+            if next:
+                parse_url = urllib.parse.urlparse(next)
+                offset = int(urllib.parse.parse_qs(parse_url.query).get('offset')[0])
+                limit = int(urllib.parse.parse_qs(parse_url.query).get('limit')[0])
 
         album_counter = Counter()
         album_info = {}
         for item in items:
-            album = item['track']['album']
+            album = item['album']
             album_id = album['id']
             album_counter[album_id] += 1
             if album_id not in album_info:
